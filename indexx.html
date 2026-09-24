@@ -1,0 +1,3158 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Büyük Yatay Sahası - Fikstür & İstasyon Portalı</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* ORTAK KART VE BUTON STİLLERİ */
+    .section-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 14px;
+    }
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      outline: none;
+      background-color: #f8fafc;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: #2563eb;
+      background-color: white;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: white;
+      border: none;
+      padding: 13px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+      transition: all 0.15s;
+      margin-top: 8px;
+    }
+    .btn-primary:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #b91c1c, #ef4444);
+      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
+    }
+
+    /* 1. OPERATÖR GİRİŞ EKRANI */
+    #loginScreen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 85vh;
+    }
+    .login-card {
+      background: white;
+      border-radius: 20px;
+      padding: 32px 24px;
+      box-shadow: 0 15px 30px -5px rgba(15, 23, 42, 0.12);
+      border: 1px solid #e2e8f0;
+      width: 100%;
+      max-width: 420px;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .login-logo {
+      width: 54px;
+      height: 54px;
+      background: linear-gradient(135deg, #1e3a8a, #0f172a);
+      color: white;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin: 0 auto 12px auto;
+      box-shadow: 0 8px 16px -4px rgba(30, 58, 138, 0.3);
+    }
+    .login-header h2 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .login-header p {
+      font-size: 0.82rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+    .login-divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 20px 0 16px 0;
+      color: #94a3b8;
+      font-size: 0.76rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .login-divider::before, .login-divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .login-divider:not(:empty)::before { margin-right: .75em; }
+    .login-divider:not(:empty)::after { margin-left: .75em; }
+    .btn-complaint-trigger {
+      width: 100%;
+      background: #f8fafc;
+      color: #dc2626;
+      border: 2px dashed #fca5a5;
+      padding: 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+    .btn-complaint-trigger:hover {
+      background: #fef2f2;
+      border-color: #ef4444;
+      transform: translateY(-1px);
+    }
+
+    /* 2. MÜŞTERİ ŞİKAYET EKRANI (GİRİŞSİZ) */
+    #complaintScreen {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      min-height: 85vh;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    .complaint-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px 24px;
+      box-shadow: 0 15px 30px -5px rgba(15, 23, 42, 0.12);
+      border: 1px solid #e2e8f0;
+      width: 100%;
+      max-width: 480px;
+    }
+    .complaint-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 12px;
+    }
+    .complaint-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .complaint-icon {
+      width: 44px;
+      height: 44px;
+      background: #fee2e2;
+      color: #dc2626;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+    .complaint-header h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .complaint-header p {
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+    /* RESMİ ŞİKAYET FORMU (LETTERHEAD TASARIMI) */
+    .formal-card {
+      max-width: 560px;
+    }
+    .formal-letterhead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px double #1e293b;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .formal-letterhead-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .formal-logo {
+      width: 42px;
+      height: 42px;
+      background: #1e293b;
+      color: white;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.82rem;
+      flex-shrink: 0;
+    }
+    .formal-company-name {
+      font-weight: 800;
+      font-size: 0.94rem;
+      color: #0f172a;
+    }
+    .formal-company-sub {
+      font-size: 0.7rem;
+      color: #64748b;
+    }
+    .formal-doc-meta {
+      text-align: right;
+      font-size: 0.7rem;
+      color: #475569;
+      line-height: 1.6;
+    }
+    .formal-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .formal-title-row h2 {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: #0f172a;
+      line-height: 1.4;
+    }
+    .formal-section {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      background: #fafbfc;
+    }
+    .formal-section-title {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #475569;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .formal-confirm-section {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+    .formal-checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: #78350f;
+      cursor: pointer;
+    }
+    .formal-checkbox-row input {
+      margin-top: 2px;
+    }
+    .formal-footer-note {
+      text-align: center;
+      font-size: 0.68rem;
+      color: #94a3b8;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    /* FOTOĞRAF EKLEME / ÖNİZLEME */
+    .photo-preview-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .photo-preview-item {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      flex-shrink: 0;
+    }
+    .photo-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-preview-remove {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: rgba(15, 23, 42, 0.7);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 11px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+    }
+    .photo-hint {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      margin-top: 6px;
+    }
+    .complaint-photos-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .complaint-photo-thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid #e2e8f0;
+      cursor: pointer;
+    }
+
+    .btn-back-login {
+      background: #f1f5f9;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #64748b;
+      cursor: pointer;
+    }
+
+    /* 3. ANA OPERATÖR PANELİ */
+    #mainApp {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    header {
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: white;
+      padding: 18px 20px;
+      border-radius: 18px;
+      box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.3);
+      margin-bottom: 14px;
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: 600;
+    }
+    .header-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .btn-phone {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 5px 11px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.15s;
+    }
+    .btn-phone:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .btn-logout {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 5px 11px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-logout:hover {
+      background: #dc2626;
+    }
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    header p {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    /* SEKMELER */
+    .tab-nav {
+      display: flex;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      gap: 4px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 11px 8px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+      color: #64748b;
+      background: transparent;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .tab-btn.active {
+      background: white;
+      color: #1e3a8a;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .badge-counter {
+      background: #ef4444;
+      color: white;
+      font-size: 0.68rem;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 800;
+    }
+
+    /* FİLTRE BUTONLARI */
+    .m-pill {
+      padding: 5px 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #f8fafc;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .m-pill.active {
+      background: #1e3a8a;
+      color: white;
+      border-color: #1e3a8a;
+    }
+
+    /* ARAMA VE KARTLAR */
+    .search-input-wrapper {
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      padding: 14px 44px 14px 14px;
+      font-size: 1.05rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background-color: #f8fafc;
+    }
+    .search-input:focus {
+      border-color: #2563eb;
+      background-color: #ffffff;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    }
+    .clear-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #e2e8f0;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #64748b;
+      font-weight: bold;
+    }
+
+    /* SON ARANANLAR (SEARCH HISTORY CHIPS) */
+    .history-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed #e2e8f0;
+    }
+    .history-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #94a3b8;
+    }
+    .history-chip {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #1e293b;
+      padding: 4px 10px;
+      border-radius: 16px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .history-chip:hover {
+      background: #e2e8f0;
+      border-color: #94a3b8;
+    }
+    .btn-clear-history {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-left: auto;
+    }
+    .btn-clear-history:hover {
+      color: #ef4444;
+    }
+
+    .info-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    /* SONUÇ KARTLARI */
+    .results-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .result-card {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+      border-left: 5px solid #2563eb;
+      border-top: 1px solid #f1f5f9;
+      border-right: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
+      animation: fadeIn 0.18s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 8px;
+    }
+    .aparat-title {
+      font-size: 0.72rem;
+      color: #64748b;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .aparat-code {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #1e3a8a;
+    }
+    .shelf-badge-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    .shelf-badge {
+      background-color: #dbeafe;
+      color: #1e40af;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border: 1px solid #bfdbfe;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-change-shelf {
+      background: transparent;
+      border: none;
+      color: #2563eb;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .btn-change-shelf:hover {
+      background: #eff6ff;
+      text-decoration: underline;
+    }
+    .shelf-updated-tag {
+      font-size: 0.65rem;
+      background: #10b981;
+      color: white;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .shelf-updater-info {
+      font-size: 0.72rem;
+      color: #64748b;
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+    .shelf-updater-info strong {
+      color: #334155;
+    }
+
+    /* KONUM GÜNCELLEME GEÇMİŞİ */
+    .shelf-log-wrapper {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed #e2e8f0;
+    }
+    .shelf-log-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .shelf-log-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #94a3b8;
+    }
+    .shelf-log-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+      padding: 6px 0;
+      border-bottom: 1px dotted #f1f5f9;
+    }
+    .shelf-log-item:last-child {
+      border-bottom: none;
+    }
+    .shelf-log-aparat {
+      font-weight: 800;
+      color: #1e3a8a;
+    }
+    .shelf-log-arrow {
+      color: #94a3b8;
+    }
+    .shelf-log-value {
+      font-weight: 700;
+      color: #0f172a;
+      background: #f1f5f9;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .shelf-log-value-old {
+      font-weight: 600;
+      color: #94a3b8;
+      background: transparent;
+      text-decoration: line-through;
+      padding: 1px 2px;
+    }
+    .shelf-log-meta {
+      color: #94a3b8;
+      font-size: 0.72rem;
+      margin-left: auto;
+    }
+
+    /* DIŞA AKTARMA BUTONLARI */
+    .export-btn-group {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .btn-export {
+      background: #eef2ff;
+      color: #4338ca;
+      border: 1px solid #c7d2fe;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-export:hover {
+      background: #e0e7ff;
+    }
+
+    /* EĞİTİM SINAVLARI VE TAKİP */
+    .exam-question-block {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+    .exam-question-title {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: #1e293b;
+      margin-bottom: 10px;
+    }
+    .exam-option-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #334155;
+    }
+    .exam-option-row input {
+      cursor: pointer;
+    }
+    .exam-result-box {
+      display: none;
+      text-align: center;
+      padding: 18px;
+      border-radius: 10px;
+      margin-top: 14px;
+      font-weight: 700;
+    }
+    .exam-result-box.pass {
+      display: block;
+      background: #ecfdf5;
+      border: 1px solid #6ee7b7;
+      color: #047857;
+    }
+    .exam-result-box.fail {
+      display: block;
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #b91c1c;
+    }
+    .track-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      margin-top: 10px;
+    }
+    .track-table th {
+      text-align: left;
+      padding: 8px 6px;
+      border-bottom: 2px solid #e2e8f0;
+      color: #64748b;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+    }
+    .track-table td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #1e293b;
+    }
+    .track-status {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .track-status.guncel {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .track-status.gecmis {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .track-status.warning {
+      background: #fef3c7;
+      color: #b45309;
+    }
+    .exam-timer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 10px 0 14px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+      font-weight: 800;
+    }
+    .exam-timer.expired {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #b91c1c;
+    }
+    .exam-link-card {
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .exam-link-card:hover {
+      background: #eff6ff;
+      border-color: #93c5fd;
+      transform: translateY(-1px);
+    }
+    .complaint-training-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 8px;
+      padding: 6px 9px;
+      border-radius: 7px;
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: .76rem;
+      font-weight: 800;
+      border: 1px solid #bfdbfe;
+      cursor: pointer;
+    }
+    .exam-group-title {
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: #1e293b;
+      margin: 18px 0 4px 0;
+    }
+    .exam-group-freq {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+    .info-item-label {
+      color: #64748b;
+      font-weight: 600;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .info-item-val {
+      color: #0f172a;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 2px;
+      word-break: break-all;
+    }
+    .status-tag {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background-color: #ecfdf5;
+      color: #059669;
+    }
+    .status-warning {
+      background-color: #fef3c7;
+      color: #b45309;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 35px 20px;
+      background: white;
+      border-radius: 16px;
+      color: #94a3b8;
+      border: 1px dashed #cbd5e1;
+    }
+    .empty-icon {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    /* DÖKÜMAN LİSTELERİ */
+    .card-title {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .doc-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .doc-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #0f172a;
+      font-size: 0.86rem;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .doc-item:hover {
+      background: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06);
+    }
+    .doc-item-green { border-left: 4px solid #10b981; }
+    .doc-item-red { border-left: 4px solid #ef4444; }
+    .doc-info { display: flex; align-items: center; gap: 10px; }
+    .doc-icon { font-size: 1rem; }
+    .doc-title { line-height: 1.35; }
+    .doc-badge-opl { background: #dcfce7; color: #166534; font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
+    .doc-badge-doc { background: #fee2e2; color: #991b1b; font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
+
+    /* MÜŞTERİ ŞİKAYET KARTLARI (İÇ PANEL) */
+    .complaint-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 5px solid #dc2626;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .complaint-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+    .complaint-item-id {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: #dc2626;
+      background: #fee2e2;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .complaint-item-date {
+      font-size: 0.74rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .complaint-item-company {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .complaint-item-type {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #475569;
+      background: #e2e8f0;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-top: 4px;
+    }
+    .complaint-item-body {
+      font-size: 0.88rem;
+      color: #334155;
+      margin-top: 10px;
+      line-height: 1.45;
+      background: white;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    .complaint-item-contact {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #475569;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .btn-delete-complaint {
+      background: #fee2e2;
+      color: #991b1b;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-delete-complaint:hover {
+      background: #fecaca;
+    }
+
+    /* 4. DAHİLİ REHBER MODAL */
+    #phoneModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(3px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .phone-card {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    .phone-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .phone-header h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-close-modal {
+      background: #f1f5f9;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #64748b;
+      cursor: pointer;
+    }
+    .phone-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .phone-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      text-decoration: none;
+      color: #0f172a;
+      transition: all 0.15s;
+    }
+    .phone-item:hover {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+    .phone-unit {
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+    .phone-sub {
+      font-size: 0.74rem;
+      color: #64748b;
+    }
+    .phone-num {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #1e40af;
+      background: #dbeafe;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    /* MASTER GİRİŞİ VE YETKİ SİSTEMİ */
+    .btn-master {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 5px 11px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.15s;
+    }
+    .btn-master:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .btn-master.is-active {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      color: #451a03;
+    }
+    .master-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(3px);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .master-modal-card {
+      background: white;
+      border-radius: 20px;
+      padding: 26px 24px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    .master-modal-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .master-modal-icon {
+      width: 40px;
+      height: 40px;
+      background: #fef3c7;
+      color: #b45309;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .master-modal-header h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .master-modal-header p {
+      font-size: 0.76rem;
+      color: #64748b;
+      margin-top: 1px;
+    }
+    .master-modal-error {
+      display: none;
+      background: #fee2e2;
+      color: #b91c1c;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    .master-modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .master-modal-actions .btn-primary {
+      margin-top: 0;
+    }
+    .btn-cancel-modal {
+      flex-shrink: 0;
+      background: #f1f5f9;
+      border: none;
+      color: #475569;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    /* APARAT / PARÇA EKLEME */
+    .btn-add-record {
+      width: 100%;
+      background: #ecfdf5;
+      color: #047857;
+      border: 2px dashed #6ee7b7;
+      padding: 12px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s;
+      margin-top: 10px;
+    }
+    .btn-add-record:hover {
+      background: #d1fae5;
+      border-color: #10b981;
+    }
+    .add-record-note {
+      font-size: 0.74rem;
+      color: #94a3b8;
+      text-align: center;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ==================================================== -->
+  <!-- 1. KULLANICI GİRİŞ EKRANI                           -->
+  <!-- ==================================================== -->
+  <div id="loginScreen">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo">⚙️</div>
+        <h2>Büyük Yatay Sahası</h2>
+        <p>İstasyon Yönetim & Fikstür Portalı</p>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label" for="loginUser">Operatör Adı / Sicil No:</label>
+          <input type="text" id="loginUser" class="form-input" placeholder="Örn: Onur Şen veya 1042" required autocomplete="name" autofocus>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="loginShift">Çalışılan Vardiya:</label>
+          <select id="loginShift" class="form-select">
+            <option value="1. Vardiya (07:15 - 15:15)">1. Vardiya (07:15 - 15:15)</option>
+            <option value="2. Vardiya (15:15 - 23:15)">2. Vardiya (15:15 - 23:15)</option>
+            <option value="3. Vardiya (23:15 - 07:15)">3. Vardiya (23:15 - 07:15)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-primary">İstasyona Giriş Yap →</button>
+      </form>
+
+      <div class="login-divider">Veya</div>
+
+      <!-- ŞİKAYET GİRİŞİ (SADECE SORUMLU MÜHENDİS - ŞİFRELİ) -->
+      <button type="button" class="btn-complaint-trigger" onclick="openComplaintPasswordGate()">
+        <span>📢</span>
+        <span>Müşteri Şikayeti Gir (Yetkili Mühendis)</span>
+      </button>
+
+      <div class="login-hint">
+        🔒 HMS Makina Talaşlı İmalat Güvenli Operatör Terminali
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- 2. GİRİŞSİZ MÜŞTERİ ŞİKAYET FORMU                   -->
+  <!-- ==================================================== -->
+  <div id="complaintScreen">
+    <div class="complaint-card formal-card">
+      <div class="formal-letterhead">
+        <div class="formal-letterhead-brand">
+          <div class="formal-logo">HMS</div>
+          <div>
+            <div class="formal-company-name">HMS BY İmalat</div>
+            <div class="formal-company-sub">Kalite Güvence Departmanı</div>
+          </div>
+        </div>
+        <div class="formal-doc-meta">
+          <div>Doküman No: <strong>MSF-QR-01</strong></div>
+          <div>Düzenleme Tarihi: <strong id="complaintFormDate">--.--.----</strong></div>
+        </div>
+      </div>
+
+      <div class="formal-title-row">
+        <h2>MÜŞTERİ ŞİKAYETİ / UYGUNSUZLUK BİLDİRİM FORMU</h2>
+        <button class="btn-back-login" onclick="showLoginScreen()">← Geri Dön</button>
+      </div>
+
+      <form id="publicComplaintForm" onsubmit="handlePublicComplaint(event)">
+
+        <div class="formal-section">
+          <div class="formal-section-title">1. Raporu Düzenleyen</div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="compEngineer">Sorumlu Mühendis Adı Soyadı:</label>
+            <input type="text" id="compEngineer" class="form-input" placeholder="Örn: Ahmet Yılmaz" required>
+          </div>
+        </div>
+
+        <div class="formal-section">
+          <div class="formal-section-title">2. Müşteri Bilgileri</div>
+          <div class="form-group">
+            <label class="form-label" for="compCompany">Müşteri / Firma Adı:</label>
+            <input type="text" id="compCompany" class="form-input" placeholder="Örn: TUSAŞ / GKN / SABCA / Firma Adı" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="compContact">İletişim Bilgisi (Yetkili / Telefon / E-Posta):</label>
+            <input type="text" id="compContact" class="form-input" placeholder="Örn: İsim Soyisim - 053X XXX XX XX" required>
+          </div>
+        </div>
+
+        <div class="formal-section">
+          <div class="formal-section-title">3. Şikayet / Uygunsuzluk Detayı</div>
+          <div class="form-group">
+            <label class="form-label" for="compPart">İlgili Parça Kodu / Sipariş No (Varsa):</label>
+            <input type="text" id="compPart" class="form-input" placeholder="Örn: 87144162 veya 423Z6202">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="compType">Uygunsuzluk / Şikayet Türü:</label>
+            <select id="compType" class="form-select">
+              <option value="Ölçüsel Boyut / Tolerans Hatası">Ölçüsel Boyut / Tolerans Hatası</option>
+              <option value="Yüzey Pürüzlülüğü / Çapak Durumu">Yüzey Pürüzlülüğü / Çapak Durumu</option>
+              <option value="Aparat / Fikstür Kaynaklı Hasar">Aparat / Fikstür Kaynaklı Hasar</option>
+              <option value="Eksik Adet / Sevkiyat Uyuşmazlığı">Eksik Adet / Sevkiyat Uyuşmazlığı</option>
+              <option value="Paketleme & Korozyon">Paketleme & Korozyon</option>
+              <option value="Diğer Kalite Talebi">Diğer Kalite Talebi</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="compTraining">İlgili Eğitim / Sınav:</label>
+            <select id="compTraining" class="form-select" required>
+              <option value="">— İlgili eğitimi seçiniz —</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="compDetails">Şikayet Açıklaması & Tespit Edilen Durum:</label>
+            <textarea id="compDetails" class="form-textarea" placeholder="Lütfen karşılaşılan uygunsuzluğu veya talebinizi detaylandırınız..." required></textarea>
+          </div>
+        </div>
+
+        <div class="formal-section">
+          <div class="formal-section-title">4. Kanıt / Ek Fotoğraflar</div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="compPhotos">Fotoğraf Ekle (opsiyonel):</label>
+            <input type="file" id="compPhotos" accept="image/*" multiple class="form-input" onchange="handlePhotoSelection(this)">
+            <div class="photo-hint">En fazla 5 fotoğraf ekleyebilirsiniz.</div>
+            <div id="photoPreviewContainer" class="photo-preview-container"></div>
+          </div>
+        </div>
+
+        <div class="formal-section formal-confirm-section">
+          <label class="formal-checkbox-row">
+            <input type="checkbox" id="compConfirm" required>
+            <span>Yukarıdaki bilgilerin doğru ve eksiksiz olduğunu onaylıyorum.</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-primary btn-danger">⚠️ Şikayet Kaydını Resmi Olarak İlet</button>
+
+        <div class="formal-footer-note">
+          Bu form, HMS BY İmalat Kalite Güvence süreçleri kapsamında elektronik olarak düzenlenmiştir ve sadece yetkili personel tarafından doldurulabilir.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- 3. ANA OPERATÖR PANELİ (GİRİŞTEN SONRA)             -->
+  <!-- ==================================================== -->
+  <div id="mainApp">
+    <header>
+      <div class="header-top">
+        <div class="user-pill">
+          <span>👤 <strong id="displayUser">Operatör</strong></span>
+          <span style="opacity:0.6;">|</span>
+          <span id="displayShift">1. Vardiya</span>
+        </div>
+        <div class="header-actions">
+          <button class="btn-phone" onclick="openPhoneModal()" title="Dahili Telefon Rehberi">
+            <span>📞</span>
+            <span>Dahili Hatlar</span>
+          </button>
+          <button class="btn-master" id="masterBtn" onclick="toggleMasterMode()" title="Master Yetkisi">
+            <span>🔑</span>
+            <span id="masterBtnLabel">Master Girişi</span>
+          </button>
+          <button class="btn-logout" onclick="handleLogout()">Çıkış Yap ✕</button>
+        </div>
+      </div>
+      <h1>Fikstür & Doküman Portalı</h1>
+      <p>Büyük Yatay İşleme Sahası • <span id="headerRecordCount">256</span> Aparat • Kalite & OPL</p>
+    </header>
+
+    <!-- SEKMELER (ARAMA, DÖKÜMANLAR VE MÜŞTERİ ŞİKAYETLERİ) -->
+    <div class="tab-nav">
+      <button class="tab-btn active" id="btnTabSearch" onclick="showTab('search')">🔍 Parça & Aparat</button>
+      <button class="tab-btn" id="btnTabDocs" onclick="showTab('docs')">📋 Eğitim & Formlar</button>
+      <button class="tab-btn" id="btnTabComplaints" onclick="showTab('complaints')">
+        <span>📢 Şikayetler</span>
+        <span class="badge-counter" id="complaintsCountBadge">0</span>
+      </button>
+    </div>
+
+    <!-- 1. SEKME: PARÇA & APARAT ARAMA -->
+    <div id="tabSearch">
+      <div class="section-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+          <label class="form-label" id="searchLabel" for="searchBox" style="margin-bottom: 0;">Aramak İstediğiniz Kodu Giriniz:</label>
+          <div style="display: flex; gap: 4px; background: #f1f5f9; padding: 3px; border-radius: 8px;">
+            <button class="m-pill active" id="filterAll" onclick="setSearchFilter('all')">⚡ Tümü</button>
+            <button class="m-pill" id="filterPart" onclick="setSearchFilter('part')">🔍 Parça No</button>
+            <button class="m-pill" id="filterAparat" onclick="setSearchFilter('aparat')">🏷️ Aparat Kodu</button>
+          </div>
+        </div>
+
+        <div class="search-input-wrapper">
+          <input type="text" id="searchBox" class="search-input" placeholder="Örn: 87144162 veya H6100 yazınız..." autocomplete="off" autofocus>
+          <button class="clear-btn" id="clearBtn" title="Temizle">✕</button>
+        </div>
+
+        <!-- 2. FİKİR: SON ARANANLAR LİSTESİ -->
+        <div id="searchHistoryWrapper" class="history-row" style="display: none;">
+          <span class="history-title">🕒 Son Aramalar:</span>
+          <div id="historyChips" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
+          <button class="btn-clear-history" onclick="clearSearchHistory()">Temizle</button>
+        </div>
+
+        <div class="info-bar">
+          <span id="matchCount">Aramak için parça veya aparat kodu giriniz</span>
+          <span id="totalRecordCount">256 Aparat Kayıtlı</span>
+        </div>
+
+        <button class="btn-add-record" onclick="handleAddRecordClick()">
+          <span>➕</span>
+          <span>Yeni Aparat / Parça Kaydı Ekle</span>
+        </button>
+        <div class="add-record-note">🔒 Bu işlem için Master yetkisi gereklidir</div>
+
+        <div id="shelfLogWrapper" class="shelf-log-wrapper" style="display: none;">
+          <div class="shelf-log-title-row">
+            <span class="shelf-log-title">🕒 Son Konum Güncellemeleri</span>
+            <div class="export-btn-group">
+              <button class="btn-export" onclick="exportShelfLogToExcel()">📊 Excel</button>
+              <button class="btn-export" onclick="exportShelfLogToPDF()">📄 PDF</button>
+              <button class="btn-clear-history" onclick="clearShelfUpdateLog()">Temizle</button>
+            </div>
+          </div>
+          <div id="shelfLogList"></div>
+        </div>
+      </div>
+
+      <div id="results" class="results-container">
+        <div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <p id="emptyPrompt">Aparatı, raf konumunu ve işlenen parçaları görmek için yukarıya kod yazınız.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. SEKME: EĞİTİMLER VE DOKÜMANLAR -->
+    <div id="tabDocs" style="display: none;">
+      <!-- YEŞİL EĞİTİMLER -->
+      <div class="section-card">
+        <div class="card-title">
+          <span>Tek Nokta Eğitimleri (OPL)</span>
+          <span class="doc-badge-opl">11 Klasör • Yeşil Kodlar</span>
+        </div>
+        <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 12px;">Panoda asılı olan yeşil renkli tek nokta eğitim klasörlerine doğrudan erişim:</p>
+        <div class="doc-grid">
+          <a href="https://drive.google.com/drive/folders/1EYWC2MK_V37uTllxLDEjyUZ3vRA59K_R" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-green">
+            <div class="doc-info">
+              <span class="doc-icon">🟢</span>
+              <span class="doc-title">İlk onay ölçümü</span>
+            </div>
+            <span class="doc-badge-opl">Klasörü Aç ↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/1QrWmVeY-KtMxw7Qpafg4o-UR36UWAsfV" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-green">
+            <div class="doc-info">
+              <span class="doc-icon">🟢</span>
+              <span class="doc-title">Operasyon resmi</span>
+            </div>
+            <span class="doc-badge-opl">Klasörü Aç ↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/13JSsZDrdcc4vMepNOgfJuJdS2C5BrOEJ" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-green">
+            <div class="doc-info">
+              <span class="doc-icon">🟢</span>
+              <span class="doc-title">Operasyon kartina tanımlı endirekt malzeme durumu</span>
+            </div>
+            <span class="doc-badge-opl">Klasörü Aç ↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/15L1ZkSYmt7dITisRY3O0iBR0qmt6atlV" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-green">
+            <div class="doc-info">
+              <span class="doc-icon">🟢</span>
+              <span class="doc-title">CMM raporu</span>
+            </div>
+            <span class="doc-badge-opl">Klasörü Aç ↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/15Y0BqMvMnB1UaetEJ0cxGSEe_bJRd6gV" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-green">
+            <div class="doc-info">
+              <span class="doc-icon">🟢</span>
+              <span class="doc-title">Takım kırılması</span>
+            </div>
+            <span class="doc-badge-opl">Klasörü Aç ↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/13cXFMtjo5lbXMfzmAZ6OwJaNQgAK4YnS" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-green">
+            <div class="doc-info">
+              <span class="doc-icon">🟢</span>
+              <span class="doc-title">Operasyon kartındaki takım ile gelen takım uyuşmazlığı</span>
+            </div>
+            <span class="doc-badge-opl">Klasörü Aç ↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/1Bks7Cbun1XtXUVLP47R7z2ymTa3YQ2GD" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-green">
+            <div class="doc-info">
+              <span class="doc-icon">🟢</span>
+              <span class="doc-title">Operasyon resmi / teknik resim ile OKF uyuşmazlığı</span>
+            </div>
+            <span class="doc-badge-opl">Klasörü Aç ↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/1_KEIRPwT7Txh61lhS7MqWPkVCb1pPps7" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-green">
+            <div class="doc-info">
+              <span class="doc-icon">🟢</span>
+              <span class="doc-title">İş emrindeki adet ile parça sayısı uyuşmazlığı</span>
+            </div>
+            <span class="doc-badge-opl">Klasörü Aç ↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/16umV0n_bm25Ds8nsHh5lx8znOTmRvtM2" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-green">
+            <div class="doc-info">
+              <span class="doc-icon">🟢</span>
+              <span class="doc-title">Gelen malzemenin ölçüsel durumu</span>
+            </div>
+            <span class="doc-badge-opl">Klasörü Aç ↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/1h0LZseei4CSBTuF57cj619ByPMXcltuT" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-green">
+            <div class="doc-info">
+              <span class="doc-icon">🟢</span>
+              <span class="doc-title">Seri üretimde ölçüm sonucunun hatalı gelmesi durumu</span>
+            </div>
+            <span class="doc-badge-opl">Klasörü Aç ↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/10HEqveMpA2eCwDwNK5ZXg0xyAq2S5gUD" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-green">
+            <div class="doc-info">
+              <span class="doc-icon">🟢</span>
+              <span class="doc-title">Tezgah binmesi</span>
+            </div>
+            <span class="doc-badge-opl">Klasörü Aç ↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- KIRMIZI DOKÜMANLAR -->
+      <div class="section-card">
+        <div class="card-title">
+          <span>Eğitim Dokümanları & Talimatlar</span>
+          <span class="doc-badge-doc">3 Klasör • Kırmızı Kodlar</span>
+        </div>
+        <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 12px;">Panodaki kırmızı renkli setup ve kalibrasyon talimat klasörlerine doğrudan erişim:</p>
+        <div class="doc-grid">
+          <a href="https://drive.google.com/drive/folders/1NdVMD3HEm1wLMw-eY1A-3hpjXKVeTz5L" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-red">
+            <div class="doc-info">
+              <span class="doc-icon">🔴</span>
+              <span class="doc-title">Büyük yatay kalibrasyonlar</span>
+            </div>
+            <span class="doc-badge-doc">Klasörü Aç ↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/1g05-tWtLsleWzgOU5tasSr_Ur1l2L40P" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-red">
+            <div class="doc-info">
+              <span class="doc-icon">🔴</span>
+              <span class="doc-title">Freze setup talimatı</span>
+            </div>
+            <span class="doc-badge-doc">Klasörü Aç ↗</span>
+          </a>
+          <a href="https://drive.google.com/drive/folders/1LF1picynpkg_HUqUwpY3yfzO_LvDSyFe" target="_blank" rel="noopener noreferrer" class="doc-item doc-item-red">
+            <div class="doc-info">
+              <span class="doc-icon">🔴</span>
+              <span class="doc-title">Yeni takım - tutucu alma talimatı</span>
+            </div>
+            <span class="doc-badge-doc">Klasörü Aç ↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- SINAV VE EĞİTİM TAKİP MODÜLÜ -->
+      <div class="section-card">
+        <div class="card-title">
+          <span>📝 Eğitim Sınavları ve Takip</span>
+        </div>
+
+        <div class="ts-subtabs">
+          <button id="exam-sub-take" class="active" onclick="setExamSubtab('take')">Sınavı Çöz</button>
+          <button id="exam-sub-track" onclick="setExamSubtab('track')">Takip Çizelgesi</button>
+        </div>
+
+        <!-- SINAVI ÇÖZ -->
+        <div id="exam-view-take">
+          <div class="field">
+            <label class="form-label">Sınav Seç</label>
+            <select id="examSelect" class="form-select" onchange="loadSelectedExam()">
+              <option value="">— Sınav seçiniz —</option>
+            </select>
+          </div>
+          <div id="examTimer" class="exam-timer" style="display:none;">
+            <span>⏱️ Kalan Süre</span><span id="examTimerValue">--:--</span>
+          </div>
+          <div id="examQuestionsContainer"></div>
+          <div id="examResultBox" class="exam-result-box"></div>
+        </div>
+
+        <!-- TAKİP ÇİZELGESİ -->
+        <div id="exam-view-track" class="hidden">
+          <button class="btn-add-record" onclick="handleAddExamClick()">
+            <span>➕</span>
+            <span>Yeni Eğitim Sınavı Oluştur</span>
+          </button>
+          <div class="add-record-note">🔒 Bu işlem için Master yetkisi gereklidir</div>
+          <div id="examFormContainer"></div>
+          <div id="examTrackContainer"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 3. SEKME: GELEN MÜŞTERİ ŞİKAYETLERİ TAKİP PANELİ -->
+    <div id="tabComplaints" style="display: none;">
+      <div class="section-card">
+        <div class="card-title">
+          <span>Gelen Müşteri & Kalite Şikayetleri</span>
+          <div class="export-btn-group">
+            <button class="btn-export" onclick="exportComplaintsToExcel()">📊 Excel</button>
+            <button class="btn-export" onclick="exportComplaintsToPDF()">📄 PDF</button>
+            <button class="btn-delete-complaint" onclick="clearAllComplaints()">Tümünü Temizle</button>
+          </div>
+        </div>
+        <div id="complaintsListContainer">
+          <!-- JS ile doldurulacak -->
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Büyük Yatay Sahası • İstasyon Yönetim Portalı
+    </footer>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- ŞİKAYET GİRİŞİ ŞİFRE KAPISI (SORUMLU MÜHENDİS)      -->
+  <!-- ==================================================== -->
+  <div class="master-modal-overlay" id="complaintPasswordModal">
+    <div class="master-modal-card">
+      <div class="master-modal-header">
+        <div class="master-modal-icon">📢</div>
+        <div>
+          <h3>Şikayet Girişi</h3>
+          <p>Bu ekrana sadece yetkili mühendis giriş yapabilir</p>
+        </div>
+      </div>
+      <form id="complaintPasswordForm" onsubmit="handleComplaintPasswordSubmit(event)">
+        <div class="form-group" style="margin-bottom: 6px;">
+          <label class="form-label" for="complaintPasswordInput">Yetkili Şifresi:</label>
+          <input type="password" id="complaintPasswordInput" class="form-input" placeholder="••••••••" required autocomplete="off">
+        </div>
+        <div class="master-modal-error" id="complaintPasswordError">Hatalı şifre. Lütfen tekrar deneyiniz.</div>
+        <div class="master-modal-actions">
+          <button type="button" class="btn-cancel-modal" onclick="closeComplaintPasswordGate()">Vazgeç</button>
+          <button type="submit" class="btn-primary">Giriş Yap →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- MASTER GİRİŞ MODALI                                 -->
+  <!-- ==================================================== -->
+  <div class="master-modal-overlay" id="masterLoginModal">
+    <div class="master-modal-card">
+      <div class="master-modal-header">
+        <div class="master-modal-icon">🔑</div>
+        <div>
+          <h3>Master Girişi</h3>
+          <p>Bu işlem için yetkili şifresi gereklidir</p>
+        </div>
+      </div>
+      <form id="masterLoginForm" onsubmit="handleMasterLoginSubmit(event)">
+        <div class="form-group" style="margin-bottom: 6px;">
+          <label class="form-label" for="masterPasswordInput">Master Şifresi:</label>
+          <input type="password" id="masterPasswordInput" class="form-input" placeholder="••••••••" required autocomplete="off">
+        </div>
+        <div class="master-modal-error" id="masterLoginError">Hatalı şifre. Lütfen tekrar deneyiniz.</div>
+        <div class="master-modal-actions">
+          <button type="button" class="btn-cancel-modal" onclick="closeMasterLoginModal()">Vazgeç</button>
+          <button type="submit" class="btn-primary">Giriş Yap →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- YENİ APARAT / PARÇA EKLEME MODALI                   -->
+  <!-- ==================================================== -->
+  <div class="master-modal-overlay" id="addRecordModal">
+    <div class="master-modal-card" style="max-width: 460px;">
+      <div class="master-modal-header">
+        <div class="master-modal-icon" style="background:#dcfce7; color:#047857;">➕</div>
+        <div>
+          <h3>Yeni Aparat / Parça Ekle</h3>
+          <p>Kayıt, portala anında eklenecektir</p>
+        </div>
+      </div>
+      <form id="addRecordForm" onsubmit="handleAddRecordSubmit(event)">
+        <div class="form-group">
+          <label class="form-label" for="newAparatCode">Aparat Kodu:</label>
+          <input type="text" id="newAparatCode" class="form-input" placeholder="Örn: H6754" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="newShelf">Raf / Konum:</label>
+          <input type="text" id="newShelf" class="form-input" placeholder="Örn: BY-213 veya BYA-0" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="newPart">İşlenen Parça Kodu (Varsa):</label>
+          <input type="text" id="newPart" class="form-input" placeholder="Örn: GKN-87144162-952-REVD-UA1-020">
+        </div>
+        <div class="form-group" style="margin-bottom: 6px;">
+          <label class="form-label" for="newStatus">Durum:</label>
+          <select id="newStatus" class="form-select">
+            <option value="SAĞLAM">SAĞLAM</option>
+            <option value="HURDA">HURDA</option>
+            <option value="KULE">KULE</option>
+            <option value="YARIM KULE">YARIM KULE</option>
+            <option value="BAKIMDA">BAKIMDA</option>
+          </select>
+        </div>
+        <div class="master-modal-actions">
+          <button type="button" class="btn-cancel-modal" onclick="closeAddRecordModal()">Vazgeç</button>
+          <button type="submit" class="btn-primary">Kaydı Ekle ✓</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- 4. DAHİLİ REHBER MODALI (5. FİKİR)                  -->
+  <!-- ==================================================== -->
+  <div id="phoneModal">
+    <div class="phone-card">
+      <div class="phone-header">
+        <h3><span>📞</span> Büyük Yatay Saha Dahili Rehberi</h3>
+        <button class="btn-close-modal" onclick="closePhoneModal()">✕</button>
+      </div>
+      <div class="phone-list">
+        <div class="phone-item">
+          <div>
+            <div class="phone-unit">Büyük Yatay Vardiya Amiri</div>
+            <div class="phone-sub">Talaşlı İmalat Saha Sorumlusu</div>
+          </div>
+          <span class="phone-num">Dahili: 1102</span>
+        </div>
+        <div class="phone-item">
+          <div>
+            <div class="phone-unit">Takımhane & Fikstür Birimi</div>
+            <div class="phone-sub">Takım Ayar, Tutucu & Aparat Deposu</div>
+          </div>
+          <span class="phone-num">Dahili: 1145</span>
+        </div>
+        <div class="phone-item">
+          <div>
+            <div class="phone-unit">Kalite Kontrol & CMM Laboratuvarı</div>
+            <div class="phone-sub">İlk Parça Onayı & Boyutsal Ölçüm</div>
+          </div>
+          <span class="phone-num">Dahili: 1220</span>
+        </div>
+        <div class="phone-item">
+          <div>
+            <div class="phone-unit">Mekanik & Elektrik Bakım-Onarım</div>
+            <div class="phone-sub">Tezgâh Arıza Bildirimi (HMC)</div>
+          </div>
+          <span class="phone-num">Dahili: 1305</span>
+        </div>
+        <div class="phone-item">
+          <div>
+            <div class="phone-unit">Üretim Planlama & İş Dağıtım</div>
+            <div class="phone-sub">İş Emri, Rota & Termin Takip</div>
+          </div>
+          <span class="phone-num">Dahili: 1180</span>
+        </div>
+        <div class="phone-item">
+          <div>
+            <div class="phone-unit">İSG Uzmanı & İşyeri Reviri</div>
+            <div class="phone-sub">Acil Durum & Sağlık Müdahale</div>
+          </div>
+          <span class="phone-num" style="background:#fee2e2; color:#dc2626;">Dahili: 1112</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- EXCEL / PDF DIŞA AKTARMA KÜTÜPHANELERİ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-storage-compat.js"></script>
+<script>
+  // ==================================================
+  // FIREBASE / FIRESTORE BAĞLANTISI (Ortak, çok cihazlı veri)
+  // ==================================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyBPlqtGELSMOwE7KV9rCCOTyuCfG8UWVLE",
+    authDomain: "hmsbyimalat.firebaseapp.com",
+    projectId: "hmsbyimalat",
+    storageBucket: "hmsbyimalat.firebasestorage.app",
+    messagingSenderId: "5211405249",
+    appId: "1:5211405249:web:4459c36ac7516818d30d40",
+    measurementId: "G-3NB3L3RWHT"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
+  // Firestore'dan gerçek zamanlı gelen ortak veriler bu değişkenlerde tutulur.
+  // Bir cihazda değişiklik olduğunda tüm cihazlarda otomatik güncellenir.
+  let customRecordsCache = [];   // Yeni eklenen aparat/parça kayıtları
+  let shelfOverridesCache = {};  // Raf/konum güncellemeleri { aparatKodu: {...} }
+  let shelfLogCache = [];        // Konum güncelleme geçmişi
+  let complaintsCache = [];      // Müşteri şikayetleri
+  let examsCache = [];           // Eğitim sınavları (tanımları)
+  let examResultsCache = [];     // Sınav sonuçları / eğitim tamamlama kayıtları
+  let examTimerInterval = null;
+  let activeExamStartedAt = null;
+  let activeExamId = null;
+
+  function initFirestoreListeners() {
+    db.collection('aparat_records').onSnapshot(snap => {
+      customRecordsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      updateTotalRecordCount();
+      if (typeof searchBox !== 'undefined' && searchBox.value.trim()) handleSearch();
+    }, err => console.error('aparat_records dinleme hatası:', err));
+
+    db.collection('shelf_overrides').onSnapshot(snap => {
+      const next = {};
+      snap.docs.forEach(d => { next[d.id] = { ...d.data(), _docId: d.id }; });
+      shelfOverridesCache = next;
+      if (typeof searchBox !== 'undefined' && searchBox.value.trim()) handleSearch();
+    }, err => console.error('shelf_overrides dinleme hatası:', err));
+
+    db.collection('shelf_update_log').orderBy('createdAt', 'desc').limit(50).onSnapshot(snap => {
+      shelfLogCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderShelfUpdateLog();
+    }, err => console.error('shelf_update_log dinleme hatası:', err));
+
+    db.collection('complaints').orderBy('createdAt', 'desc').onSnapshot(snap => {
+      complaintsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      updateComplaintsUI();
+    }, err => console.error('complaints dinleme hatası:', err));
+
+    db.collection('training_exams').orderBy('createdAt', 'desc').onSnapshot(snap => {
+      examsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderExamSelect();
+      renderComplaintTrainingSelect();
+      renderExamTrackTable();
+    }, err => console.error('training_exams dinleme hatası:', err));
+
+    db.collection('exam_results').orderBy('createdAt', 'desc').onSnapshot(snap => {
+      examResultsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderExamTrackTable();
+    }, err => console.error('exam_results dinleme hatası:', err));
+  }
+</script>
+
+<script>
+  const database = [{"aparat": "H3029", "raf": "BYA-0", "parca": "GKN-87144162-952-REVD-UA1-020", "durum": "SAĞLAM"}, {"aparat": "H3030", "raf": "BYA-0", "parca": "GKN-87144162-951-REVD-UA1-020", "durum": "SAĞLAM"}, {"aparat": "H3028", "raf": "BYA-0", "parca": "GKN-87144162-951-REVD-UA1-010", "durum": "SAĞLAM"}, {"aparat": "H3103", "raf": "BYA-0", "parca": "GKN-87144033-101-REVA/UA1", "durum": "SAĞLAM"}, {"aparat": "H5746", "raf": "BYA-0", "parca": "FAC-615-50760-002-02-REV07/A-UA1", "durum": "SAĞLAM"}, {"aparat": "H3078", "raf": "BYA-0", "parca": "GKN-85415081-103-REVC-UA1", "durum": "SAĞLAM"}, {"aparat": "H3564", "raf": "BYA-0", "parca": "GKN-W7113E003-101-REV005", "durum": "SAĞLAM"}, {"aparat": "H3623", "raf": "BYA-0", "parca": "GKN-WAA7123E030-103-REV002-UA1", "durum": "SAĞLAM"}, {"aparat": "H3184", "raf": "BYA-0", "parca": "GKN-87144326-101-01-REV003-UA1", "durum": "SAĞLAM"}, {"aparat": "H3551", "raf": "BYA-0", "parca": "GKN-WAA7123E023-101-REV003", "durum": "SAĞLAM"}, {"aparat": "H3071", "raf": "BYA-0", "parca": "GKN-85415019-102-REVB-UA1", "durum": "SAĞLAM"}, {"aparat": "H3070", "raf": "BYA-0", "parca": "GKN-85415019-101-REVB-UA1", "durum": "SAĞLAM"}, {"aparat": "H3169", "raf": "BYA-0", "parca": "GKN-85415040-103-REVB-UA1", "durum": "SAĞLAM"}, {"aparat": "H5267", "raf": "BYA-0", "parca": "PFW-C02303030-101-REV-A", "durum": "SAĞLAM"}, {"aparat": "H4640", "raf": "BYA-1", "parca": "ATK-1700024.0-REVD.UA2", "durum": "SAĞLAM"}, {"aparat": "H4177", "raf": "BYA-1", "parca": "GKN-87144022-105-REVD-UA1", "durum": "SAĞLAM"}, {"aparat": "H4164", "raf": "BYA-1", "parca": "GKN-87144023-105-REVD-UA1", "durum": "SAĞLAM"}, {"aparat": "H4174", "raf": "BYA-1", "parca": "GKN-87144021-105-REVD-UA1", "durum": "SAĞLAM"}, {"aparat": "H4166", "raf": "BYA-1", "parca": "GKN-87144023-105-REVD-UA1", "durum": "SAĞLAM"}, {"aparat": "H4165", "raf": "BYA-1", "parca": "GKN-87144023-105-REVD-UA1", "durum": "SAĞLAM"}, {"aparat": "H2748", "raf": "BYA-2", "parca": "ASE-MM-9120-0573-02-REVBB/UA1", "durum": "HURDA"}, {"aparat": "H0403", "raf": "BYA-2", "parca": "-", "durum": "KULE"}, {"aparat": "H5122", "raf": "BYA-2", "parca": "EGE-110304417-REV02-UA1", "durum": "SAĞLAM"}, {"aparat": "H4856", "raf": "BYB-1", "parca": "DCM-DQ10-4A082-224-000-REV-60", "durum": "-"}, {"aparat": "H2358", "raf": "BYB-1", "parca": "DAS-0000632426-REVC/020/UA3", "durum": "-"}, {"aparat": "H1008", "raf": "BYB-1", "parca": "-", "durum": "YARIM KULE"}, {"aparat": "H5102", "raf": "BYB-1", "parca": "EGE-11030417-REV2-UA2", "durum": "APARAT 2 ADET YERLERİ FARKLI"}, {"aparat": "H4634", "raf": "BYB-1", "parca": "DCM-0001525384-REVB-UA1", "durum": "SAĞLAM"}, {"aparat": "H2357", "raf": "BYB-1", "parca": "DAS-0000632426-REVC/010/UA3", "durum": "SAĞLAM"}, {"aparat": "H5947", "raf": "BYB-1", "parca": "FAC-C01362058-101-REV01/-A-UA1", "durum": "SAĞLAM"}, {"aparat": "H3166", "raf": "BYB-1", "parca": "GKN-87144062-103-REVB-UA1", "durum": "SAĞLAM"}, {"aparat": "H1009", "raf": "BYB-1", "parca": "-", "durum": "YARIM KULE"}, {"aparat": "H3478", "raf": "BYB-1", "parca": "GKN-WAA7118E020-101-REV001-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H3098", "raf": "BYB-1", "parca": "GKN-87144047-104-REVC-UA1-030 GKN-87144064-101-REVB-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H3097", "raf": "BYB-1", "parca": "GKN-87144047-103-REVC-UA1-030 GKN-87144064-102-REVB-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H4392", "raf": "BYB-1", "parca": "FST-03196164-REVD-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6682", "raf": "BYC-0", "parca": "FGA-G0534476710510-REV2-UA1-40", "durum": "SAĞLAM"}, {"aparat": "H6664", "raf": "BYC-0", "parca": "FGA-G0534476510310-REV1-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H4888", "raf": "BYC-0", "parca": "TAI-141T5611-6-REV-UA2-040", "durum": "SAĞLAM"}, {"aparat": "H4928", "raf": "BYC-0", "parca": "TAI-141T5611-11-REV-40 TAI-141T5611-13-REV-40", "durum": "SAĞLAM"}, {"aparat": "H4437", "raf": "BYC-0", "parca": "TAI-141T5611-16-REV-UA1/UA2-030 TAI-141T5611-2-REV-UA2-030", "durum": "SAĞLAM"}, {"aparat": "H5440", "raf": "BYC-1", "parca": "FAC-C02383076-101-REV00/-A-UA1-060", "durum": "SAĞLAM"}, {"aparat": "H4234", "raf": "BYC-1", "parca": "TAI-C01626363-002F-REV00-UA3-040 TAI-C01626361-002F-REV00-UA3-040", "durum": "SAĞLAM"}, {"aparat": "H6120", "raf": "BYC-1", "parca": "DCM-0001525384-REVE-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H4914", "raf": "BYC-1", "parca": "TAI-C01626362-001F-REV00-UA2-040", "durum": "SAĞLAM"}, {"aparat": "H5132", "raf": "BYC-1", "parca": "TEL-700110-5-REVB-120", "durum": "SAĞLAM"}, {"aparat": "H5949", "raf": "BYC-1", "parca": "SAB-423Z6202-1-REV-A-SP03-030", "durum": "SAĞLAM"}, {"aparat": "H4913", "raf": "BYC-1", "parca": "TAI-C01626362-002F-REV00-UA2-040", "durum": "SAĞLAM"}, {"aparat": "H5908", "raf": "BYC-1", "parca": "SAB-423Z6202-6-REV-040", "durum": "SAĞLAM"}, {"aparat": "H5950", "raf": "BYC-1", "parca": "SAB-423Z6202-1-REV-A-SP03-040", "durum": "SAĞLAM"}, {"aparat": "H4228", "raf": "BYC-1", "parca": "TAI-C01626361-001F-REV00-UA3-030 TAI-C01626361-002F-REV00-UA3-030 TAI-C01626363-001F-REV00-UA3-030 TAI-C01626363-002F-REV00-UA3-030 TAI-C01626362-001F-REV00-UA2-030 TAI-C01626362-002F-REV00-UA2-030", "durum": "SAĞLAM"}, {"aparat": "H5951", "raf": "BYC-1", "parca": "SAB-423Z6202-1-REV-A-SP03-050", "durum": "SAĞLAM"}, {"aparat": "H4229", "raf": "BYC-1", "parca": "TAI-C01626361-001F-REV00-UA3-040", "durum": "SAĞLAM"}, {"aparat": "H6143", "raf": "BYC-1", "parca": "TAI-C01626363-001F-REV00-UA3-040", "durum": "SAĞLAM"}, {"aparat": "H5900", "raf": "BYD-1", "parca": "ASC-C01617405-001-REVAB01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6046", "raf": "BYD-1", "parca": "ASC-C01617418-001-S3-REVAD01-30 ASC-C01617518-001-S3-REVAD01-30 ASC-C01617418-001-S3-REVAD01-30 ASC-C01617608-002-S1-REVAB01-30", "durum": "SAĞLAM"}, {"aparat": "H5927", "raf": "BYD-1", "parca": "SAB-423Z1450-5-REV-SP03-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H4087", "raf": "BYD-2", "parca": "BOM-C01686378-003-REVA-UA1-040-070 BOM-C01686378-004-REVA-UA1-040-070", "durum": "SAĞLAM"}, {"aparat": "H4092", "raf": "BYD-2", "parca": "BOM-C01686378-004-REVA-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H4089", "raf": "BYD-2", "parca": "BOM-C01686378-003-REVA-UA1-060 BOM-C01686378-004-REVA-UA1-060", "durum": "SAĞLAM"}, {"aparat": "H4088", "raf": "BYD-2", "parca": "BOM-C01686378-003-REVA-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H3000", "raf": "BYE-0", "parca": "TAI-D5397452520620F-REVC-UA1-20 TAI-D5397452520420F-REVC-UA1-20", "durum": "SAĞLAM"}, {"aparat": "H6138", "raf": "BYE-0", "parca": "SAB-423Z5201-7-SP03-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6137", "raf": "BYE-0", "parca": "SAB-423Z5201-7-SP03-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5984", "raf": "BYE-0", "parca": "ASC-147Z6871-1-SP03-50", "durum": "SAĞLAM"}, {"aparat": "H5914", "raf": "BYE-0", "parca": "ASC-C01617605-003-REVAB01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5911", "raf": "BYE-0", "parca": "ASC-C01617505-001-REVAC01-UA1-020", "durum": "SAĞLAM"}, {"aparat": "H5915", "raf": "BYE-0", "parca": "ASC-C01617606-003-REVAB01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5913", "raf": "BYE-0", "parca": "ASC-C01617506-001-REVAC01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6233", "raf": "BYE-1", "parca": "ASC-C01617750-005-REVAA01-UA1-060", "durum": "SAĞLAM"}, {"aparat": "H6193", "raf": "BYE-1", "parca": "ASC-C01617700-001-REVAA01-UA1-060", "durum": "SAĞLAM"}, {"aparat": "H6192", "raf": "BYE-1", "parca": "PFW-M53676572-204-REVD-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H5122", "raf": "BYE-1", "parca": "EGE-11030417-REV02-UA1-020", "durum": "SAĞLAM"}, {"aparat": "H5931", "raf": "BYE-1", "parca": "SAB-423Z1451-3-REV-SP03-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H6232", "raf": "BYE-1", "parca": "ASC-C01617750-005-REVAA01-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H6078", "raf": "BYE-1", "parca": "ASC-C01607335-005-REVAA01-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H6077", "raf": "BYE-1", "parca": "ASC-C01607335-005-REVAA01-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5102", "raf": "BYE-1", "parca": "EGE-11030417-REV02-UA2-020", "durum": "APARAT 2 ADET YERİ FARKLI"}, {"aparat": "H3434", "raf": "BYE-1", "parca": "TAI-C01686341-001-REV00-UA1-030 TAI-C01686341-002-REV00-UA1-030 TAI-C01686342-001-REV00-UA1-030 TAI-C01686342-002-REV00-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6137", "raf": "BYE-1", "parca": "SAB-423Z5201-7-SP03-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6138", "raf": "BYE-1", "parca": "SAB-423Z5201-7-SP03-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5232", "raf": "BYE-1", "parca": "PFW-M4987827320400-REVB00-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H3727", "raf": "BYE-2", "parca": "BOM-C01626378-006-REVA-030", "durum": "SAĞLAM"}, {"aparat": "H3723", "raf": "BYE-2", "parca": "BOM-C01626378-005-REVA-030-060", "durum": "SAĞLAM"}, {"aparat": "H3725", "raf": "BYE-2", "parca": "BOM-C01626378-005-REVA-050", "durum": "SAĞLAM"}, {"aparat": "H3724", "raf": "BYE-2", "parca": "BOM-C01626378-005-REVA-040", "durum": "SAĞLAM"}, {"aparat": "H3730", "raf": "BYE-2", "parca": "BOM-C01626378-006-REVA-50", "durum": "SAĞLAM"}, {"aparat": "H3729", "raf": "BYE-2", "parca": "BOM-C01626378-006-REVA-050", "durum": "SAĞLAM"}, {"aparat": "H5488", "raf": "BYF-0", "parca": "TAI-113A3101-3F-REV00-UA1-030 TAI-113A3101-4F-REV00-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5968", "raf": "BYF-0", "parca": "ASC-C01607302-004-REVAA01-40", "durum": "SAĞLAM"}, {"aparat": "H5891", "raf": "BYF-0", "parca": "TAI-113A3102-601AF1-REVC-SP03", "durum": "SAĞLAM"}, {"aparat": "H3477", "raf": "BYF-0", "parca": "GKN-WAA7118E020-101-REV001-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5952", "raf": "BYF-0", "parca": "ASC-C01607302-004-REVAA01-20-30 ASC-C01607302-003-REVAA01-20-30", "durum": "SAĞLAM"}, {"aparat": "H5953", "raf": "BYF-0", "parca": "ASC-C01607302-003-REVAA01-040", "durum": "SAĞLAM"}, {"aparat": "H5817", "raf": "BYF-0", "parca": "TAI-113A3104-603F1-REVC-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H3533", "raf": "BYF-0", "parca": "TAI-284A4601-40-REV-030", "durum": "SAĞLAM"}, {"aparat": "H5100", "raf": "BYF-0", "parca": "TAI-141T5501-99-REVA-UA2-030", "durum": "SAĞLAM"}, {"aparat": "H5948", "raf": "BYF-0", "parca": "ATK-YB-20*10*25-REVAD-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H3532", "raf": "BYF-0", "parca": "TAI-284A4601-40-REV-20", "durum": "SAĞLAM"}, {"aparat": "H4919", "raf": "BYF-1", "parca": "TAI-114T5611-6-REV-UA2-020 TAI-114T5611-16-REV-UA1-020 TAI-114T5611-2-REV-UA2-020", "durum": "SAĞLAM"}, {"aparat": "H5252", "raf": "BYF-1", "parca": "TAI-141T0055-149-REV-40 TAI-141T0055-150-REV-40", "durum": "SAĞLAM"}, {"aparat": "H5977", "raf": "BYF-1", "parca": "ASC-C01607312-001-REVAA01-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5676", "raf": "BYF-1", "parca": "TAI-181A8037-52MAX-REV-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5976", "raf": "BYF-1", "parca": "ASC-C01607312-001-REVAA01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5437", "raf": "BYF-1", "parca": "FAC-C02383074-101-REV00/-A-UA1-060 FAC-C02382058-101-REV00/-A-UA1-060", "durum": "SAĞLAM"}, {"aparat": "H5674", "raf": "BYF-1", "parca": "TAI-181A8037-51MAX-REV-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6033", "raf": "BYF-1", "parca": "ASC-C01617412-001-S2-REVAC02-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5251", "raf": "BYF-1", "parca": "TAI-141T0055-149-REV-30 TAI-141T0055-150-REV-30", "durum": "SAĞLAM"}, {"aparat": "H5912", "raf": "BYF-1", "parca": "ASC-C01617505-001-REVAC01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5570", "raf": "BYG-0", "parca": "TAI-C01629356-001-REV00-UA1-30 TAI-C01629356-002-REV00-UA1-30", "durum": "SAĞLAM"}, {"aparat": "H5989", "raf": "BYG-0", "parca": "ASC-C01607349-001-REVAB01-UA1-040 ASC-C01607349-002-REVAB01-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H3004", "raf": "BYG-0", "parca": "TAI-D5397456220020F-REVF-UA1-020", "durum": "SAĞLAM"}, {"aparat": "H5264", "raf": "BYG-0", "parca": "DAS-0001054694-REV01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6073", "raf": "BYG-0", "parca": "SAB-423Z4133-3-SP03-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H5250", "raf": "BYG-0", "parca": "DAS-0001054694-REV01-40", "durum": "SAĞLAM"}, {"aparat": "H3084", "raf": "BYG-0", "parca": "GKN-87144077-107-REVC/UA1-030 GKN-87144077-108-REVC/UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5884", "raf": "BYG-0", "parca": "TAI-113A3101-3-REVB-SP03-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H6131", "raf": "BYG-0", "parca": "ASC-C01607705-007-REV-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6129", "raf": "BYG-0", "parca": "ASC-C0167650-003-S-REVAA01-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6130", "raf": "BYG-0", "parca": "ASC-C01607704-007-REV-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H3082", "raf": "BYG-0", "parca": "GKN-87144058-101-REVA-UA1-030 GKN-87144058-102-REVA-UA1-030 GKN-87144059-101-REVA-UA1-030 GKN-87144059-102-REVA-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H3498", "raf": "BYG-0", "parca": "GKN-WAA7140E044-103-REV002-UA1-040 GKN-WAA7140E044-104-REV002-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H3700", "raf": "BYG-0", "parca": "FST-03351240-REV-UA1-040 FST-03349989-REV-UA1-040 FST-03349989-REVB-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H4601", "raf": "BYG-1", "parca": "DAC-0054151689-REVAE-40 DAC-0054151659-REVAE-40", "durum": "SAĞLAM"}, {"aparat": "H5749", "raf": "BYG-1", "parca": "BOŞ", "durum": "SAĞLAM"}, {"aparat": "H5883", "raf": "BYG-1", "parca": "TAI-113A3101-3-REVB-SP03-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5916", "raf": "BYG-1", "parca": "SAB-423Z3200-5-REV-UA1-030 SAB-423Z3200-6-REV-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5571", "raf": "BYG-1", "parca": "TAI-C01629357-001-REV00-UA1-30 TAI-C01629357-002-REV00-UA1-30", "durum": "SAĞLAM"}, {"aparat": "H4163", "raf": "BYG-1", "parca": "DCM-0000102453-REVS-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6139", "raf": "BYG-1", "parca": "DCM-00001832082-REVE-UA1-020", "durum": "SAĞLAM"}, {"aparat": "H6074", "raf": "BYG-1", "parca": "ASC-C01607307-005-S2-REVAA01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6075", "raf": "BYG-1", "parca": "ASC-C01607307-005-S2-REVAA01-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6076", "raf": "BYG-1", "parca": "ASC-C01607307-006-S2-REVAA01-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H4206", "raf": "BYG-2", "parca": "-", "durum": "SAĞLAM"}, {"aparat": "H2810", "raf": "BYH-0", "parca": "PFW-M53676572-202-REVC/UA1-030 PFW-M53676572-206-REVC/UA1-030", "durum": "SAĞLAM"}, {"aparat": "H2808", "raf": "BYH-0", "parca": "PFW-M53676572-202-REVC/UA1-030 PFW-M53676572-206-REVC/UA1-030", "durum": "SAĞLAM"}, {"aparat": "H2809", "raf": "BYH-0", "parca": "PFW-M53676572-202-REVC/UA1-40", "durum": "SAĞLAM"}, {"aparat": "H2862", "raf": "BYH-0", "parca": "PFW-M53676572-208-REVC/UA1-050", "durum": "SAĞLAM"}, {"aparat": "H2846", "raf": "BYH-0", "parca": "PFW-M53676572-204-REVC/UA1-040", "durum": "SAĞLAM"}, {"aparat": "H2801", "raf": "BYH-0", "parca": "TAI-2CSH25156-0007F-REV-/040", "durum": "SAĞLAM"}, {"aparat": "H2845", "raf": "BYH-1", "parca": "-", "durum": "SAĞLAM"}, {"aparat": "H2853", "raf": "BYH-1", "parca": "PFW-M53676572-200-REVC/UA1-040", "durum": "SAĞLAM"}, {"aparat": "H2811", "raf": "BYH-1", "parca": "PFW-M53676572-204-REVC/UA1-050 PFW-M53676572-202-REVC/UA1-040 PFW-M53676572-206-REVC/UA1-040", "durum": "SAĞLAM"}, {"aparat": "H2821", "raf": "BYH-1", "parca": "PFW-M53676572-206-REVC/UA1-040", "durum": "SAĞLAM"}, {"aparat": "H4175", "raf": "BYI-0", "parca": "DCM-0001475666-REVA-UA1-020-030 DCM-DQ10-4A182-200-000-REV-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6020", "raf": "BYI-0", "parca": "ASC-C01607700-005-REVAA01-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H6021", "raf": "BYI-0", "parca": "ASC-C01607700-005-REVAA01-UA1-060", "durum": "SAĞLAM"}, {"aparat": "H5974", "raf": "BYI-0", "parca": "ASC-C01607310-003-REVAB01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5975", "raf": "BYI-0", "parca": "ASC-C01607310-003-REVAB01-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6072", "raf": "BYI-0", "parca": "SAB-423Z4133-3-SP03-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5838", "raf": "BYI-0", "parca": "TEL-A257-71157-208-00-REVM-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5834", "raf": "BYI-0", "parca": "TEL-A257-71181-204-00-REVE-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5839", "raf": "BYI-0", "parca": "TEL-A257-71157-208-00-REVM-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H4034", "raf": "BYI-1", "parca": "FST-02964023-REVB-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H4088", "raf": "BYI-1", "parca": "BOM-C01686378-003-REVA-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H5978", "raf": "BYI-1", "parca": "ASC-C01607311-003-REVAB01-UA1-030 ASC-C01607313-002-REVAA01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5979", "raf": "BYI-1", "parca": "ASC-C01607311-003-REVAB01-UA1-030 ASC-C01607313-002-REVAA01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5981", "raf": "BYI-1", "parca": "ASC-C01607311-004-REVAB01-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5227", "raf": "BYI-2", "parca": "DCM-0001525383-REVE-UA1-050 DCM-0001525383-REVF-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H5935", "raf": "BYI-2", "parca": "SAB-423Z1464-5-REV-SP03-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H5907", "raf": "BYI-2", "parca": "SAB-423Z3200-5-REV-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H3223", "raf": "BYI-2", "parca": "PFW-V2917627420000-REVC00/UA1-030", "durum": "SAĞLAM"}, {"aparat": "H4634", "raf": "BYI-2", "parca": "DCM-0001525384-REVB-UA1-040 DCM-DQ10-4A082-224-000-REV-60", "durum": "SAĞLAM"}, {"aparat": "H5821", "raf": "BYI-2", "parca": "EGP-V28250246-202-REVA00-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5223", "raf": "BYI-2", "parca": "FAC-C02383019-101-REV00/-UA1-40 FAC-C02383090-101-REV00/-UA1-40 FAC-C02383072-101-REV00/-UA1-40 FAC-C02383071-101-REV00/-UA1-40 FAC-C02383068-101-REV00/-UA1-40 FAC-C02381601-101-REV01/-UA1-40 FAC-C02381032-101-REV00/-UA1-40 FAC-C02381031-101", "durum": "SAĞLAM"}, {"aparat": "H3147", "raf": "BYI-2", "parca": "GKN-85415046-103-REVE-UA1-040 GKN-85415046-104-REVE-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H3224", "raf": "BYI-2", "parca": "PFW-V2917627420100-REVC00/UA1-030", "durum": "SAĞLAM"}, {"aparat": "H4438", "raf": "BYI-2", "parca": "TAI-141T5611-16-REV-040 TAI-141T5611-2-REV-UA2-040", "durum": "SAĞLAM"}, {"aparat": "H3729", "raf": "BYI-3", "parca": "BOM-C01626378-006-REVA-050", "durum": "SAĞLAM"}, {"aparat": "H3561", "raf": "BYI-3", "parca": "TAI-C01686557-001F-REV00-UA1-040 TAI-C01686557-002F-REV00-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5919", "raf": "BYI-3", "parca": "EMT-136W1711-8-REV01-F09-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5902", "raf": "BYI-3", "parca": "SAB-423Z6186-1-REV-B-UA1-030-040 SAB-423Z6186-2-REV-UA1-030-040", "durum": "SAĞLAM"}, {"aparat": "H5805", "raf": "BYI-3", "parca": "SAB-PDT423Z1469-3001-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6102", "raf": "BYI-3", "parca": "SAB-423Z1454-2-REV-B-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6101", "raf": "BYI-3", "parca": "SAB-423Z1454-2-REV-B-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6104", "raf": "BYI-3", "parca": "SAB-423Z1463-3-REV-A-UA1-030-040", "durum": "SAĞLAM"}, {"aparat": "H6098", "raf": "BYI-3", "parca": "SAB-423Z6186-1-REV-D-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H6112", "raf": "BYI-3", "parca": "SAB-423Z5811-1-REV-C-UA1-030-40", "durum": "SAĞLAM"}, {"aparat": "H6100", "raf": "BYI-3", "parca": "SAB-423Z1452-3-REV-C-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H5804", "raf": "BYI-3", "parca": "SAB-PDT423Z1469-3001-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6393", "raf": "BYI-4", "parca": "ASC-C0160770405-AP7-REVAB0-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6059", "raf": "BYI-4", "parca": "SAB-423Z5401-1-SP03-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H3684", "raf": "BYI-4", "parca": "BOM-C01637714-005-REVB-20", "durum": "SAĞLAM"}, {"aparat": "H5345", "raf": "BYI-4", "parca": "TAI-C01686558-002F-REV-UA2-040 TAI-C01686557-002F-REV00-UA2-040", "durum": "SAĞLAM"}, {"aparat": "H6032", "raf": "BYI-4", "parca": "ASC-C01617512-001-S2-REVAC02-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5887", "raf": "BYI-4", "parca": "DCM-0001911150-REVA-030-040", "durum": "SAĞLAM"}, {"aparat": "H4288", "raf": "BYK-0", "parca": "TAI-C01677556-003CF-REVA-30", "durum": "SAĞLAM"}, {"aparat": "H6002", "raf": "BYK-1", "parca": "TAI-C01677560-007CF1-REVB-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6003", "raf": "BYK-1", "parca": "TAI-C01677560-007CF1-REVB-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H6004", "raf": "BYK-1", "parca": "TAI-C01677560-007CF1-REVB-UA1-060", "durum": "SAĞLAM"}, {"aparat": "H6005", "raf": "BYK-1", "parca": "TAI-C01677560-007CF1-REVB-UA1-070", "durum": "SAĞLAM"}, {"aparat": "H5481", "raf": "BYK-3", "parca": "PFW-M4987827320200-REVB00-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5482", "raf": "BYK-3", "parca": "PFW-M4987827320200-REVB00-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5241", "raf": "BYK-3", "parca": "PFW-M4987827320000-REVB00-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5242", "raf": "BYK-3", "parca": "PFW-M4987827320000-REVB00-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H4289", "raf": "BYK-4", "parca": "TAI-C01677556-003CF-REVA-40", "durum": "SAĞLAM"}, {"aparat": "H4290", "raf": "BYK-4", "parca": "TAI-C01677556-003CF-REVA-50", "durum": "SAĞLAM"}, {"aparat": "H6296", "raf": "BYK-4", "parca": "ROK-00059077-REVP01-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6297", "raf": "BYK-4", "parca": "ROK-00059078-REVP01-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H4346", "raf": "BYK-5", "parca": "TAI-C01677561-006CF1-REV-UA1-070", "durum": "SAĞLAM"}, {"aparat": "H4345", "raf": "BYK-5", "parca": "TAI-C01677561-006CF1-REV-UA1-060", "durum": "SAĞLAM"}, {"aparat": "H4244", "raf": "BYK-5", "parca": "TAI-C01677561-006CF1-REV-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H4343", "raf": "BYK-5", "parca": "TAI-C01677561-006CF1-REV-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H4338", "raf": "BYK-2", "parca": "TAI-C01677561-005CF1-REV-UA1-060", "durum": "SAĞLAM"}, {"aparat": "H4339", "raf": "BYK-2", "parca": "TAI-C01677561-005CF1-REV-UA1-070", "durum": "SAĞLAM"}, {"aparat": "H4336", "raf": "BYK-2", "parca": "TAI-C01677561-005CF1-REV-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H4337", "raf": "BYK-2", "parca": "TAI-C01677561-005CF1-REV-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H6384", "raf": "BYL-0", "parca": "TAI-D5357211020622F-REVZ-UA1-020", "durum": "SAĞLAM"}, {"aparat": "H3909", "raf": "BYL-1", "parca": "TAI-149A7214-927-REVA-UA1-030 TAI-149A7214-927-REVA-UA2-030", "durum": "SAĞLAM"}, {"aparat": "H3908", "raf": "BYL-1", "parca": "TAI-149A7214-927-REVA-UA1-020 TAI-149A7214-927-REVA-UA2-020", "durum": "SAĞLAM"}, {"aparat": "H6679", "raf": "BYL-2", "parca": "FGA-G0534476610510-REV2-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6683", "raf": "BYL-2", "parca": "FGA-G0534485310510-REV1-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H6665", "raf": "BYL-2", "parca": "FGA-G0534476510310-REV1-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6680", "raf": "BYL-2", "parca": "FGA-G0534476510310-REV3-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6681", "raf": "BYL-3", "parca": "FGA-G0534483110310-REV2-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6217", "raf": "BYL-3", "parca": "ROK-00032364-REVP01-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H5982", "raf": "BYL-3", "parca": "ASC-147Z6871-1-SP03-30", "durum": "SAĞLAM"}, {"aparat": "H5983", "raf": "BYL-3", "parca": "ASC-147Z6871-1-SP03-40", "durum": "SAĞLAM"}, {"aparat": "H4485", "raf": "BYL-4", "parca": "TAI-141T5810-1792-REV-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H6363", "raf": "BYL-4", "parca": "FAC-615-50641-004-REV04/A-UA1-020", "durum": "SAĞLAM"}, {"aparat": "H6052", "raf": "BYL-4", "parca": "ASC-C01607327-003-S-REVAD01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H3606", "raf": "BYL-4", "parca": "TAI-141W8841-15-REVA-UA1-030 TAI-141W8841-16-REVA-UA1-030 TAI-141W8841-17-REVA-UA1-030 TAI-141W8841-18-REVA-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6057", "raf": "BYL-4", "parca": "SAB-423Z5201-8-SP03-40", "durum": "SAĞLAM"}, {"aparat": "H6058", "raf": "BYL-4", "parca": "SAB-423Z5201-8-SP03-50", "durum": "SAĞLAM"}, {"aparat": "H6385", "raf": "BYM-0", "parca": "TAI-D5357211020622F-REVZ-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6770", "raf": "BYM-1", "parca": "FGA-G0534312610502-REV2-UA1-40", "durum": "SAĞLAM"}, {"aparat": "H6767", "raf": "BYM-1", "parca": "FGA-G0534476810502-REV2-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6206", "raf": "BYM-3", "parca": "ROK-R85206118-REVP01-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6205", "raf": "BYM-3", "parca": "ROK-R85206118-REVP01-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H0746", "raf": "BY-213", "parca": "BOŞ", "durum": "SAĞLAM"}, {"aparat": "H1116", "raf": "BY-213", "parca": "BOŞ", "durum": "SAĞLAM"}, {"aparat": "H2381", "raf": "BY-213", "parca": "TAI-2ZAH41013-0001F-REV-040-UA1", "durum": "SAĞLAM"}, {"aparat": "H6110", "raf": "BY-223", "parca": "SAB-423Z1468-2-REV-C-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6099", "raf": "BY-223", "parca": "SAB-423Z1452-3-REV-C-UA1-030-040", "durum": "SAĞLAM"}, {"aparat": "H6116", "raf": "BY-223", "parca": "SAB-423Z6177-2-REV-A-UA1-030-040", "durum": "SAĞLAM"}, {"aparat": "H6107", "raf": "BY-223", "parca": "SAB-423Z1467-3-REV-B-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H6118", "raf": "BY-223", "parca": "SAB-423Z6185-1-REV-D-UA1-030-040", "durum": "SAĞLAM"}, {"aparat": "H6106", "raf": "BY-223", "parca": "SAB-423Z1467-3-REV-B-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6065", "raf": "BY-233", "parca": "ASC-C01607327-003-S-REVAD01-UA1-40", "durum": "SAĞLAM"}, {"aparat": "H6054", "raf": "BY-233", "parca": "ASC-C01617485-003-S-REVAB01-UA1-30", "durum": "SAĞLAM"}, {"aparat": "H6374", "raf": "BY-232", "parca": "SAB-D522-79436-200-00-REVC-UA1-020", "durum": "SAĞLAM"}, {"aparat": "H6375", "raf": "BY-232", "parca": "SAB-D522-79436-200-00-REVC-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H6376", "raf": "BY-232", "parca": "SAB-D522-79436-200-00-REVC-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H4294", "raf": "BY-234", "parca": "TAI-C01677556-004CF-REVA-30", "durum": "SAĞLAM"}, {"aparat": "H4295", "raf": "BY-234", "parca": "TAI-C01677556-004CF-REVA-40", "durum": "SAĞLAM"}, {"aparat": "H4296", "raf": "BY-234", "parca": "TAI-C01677556-004CF-REVA-50", "durum": "SAĞLAM"}, {"aparat": "H5858", "raf": "BY-235", "parca": "SAB-423Z3400-2-REV-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H5971", "raf": "BY-235", "parca": "SAB-423Z3400-2-REV-UA1-020", "durum": "SAĞLAM"}, {"aparat": "H5857", "raf": "BY-235", "parca": "SAB-423Z3400-2-REV-SP03-UA1-040 SAB-423Z3400-2-REV-UA1-020", "durum": "SAĞLAM"}, {"aparat": "H4374", "raf": "BY-236", "parca": "TAI-181A1110-5-REVA-UA1-060", "durum": "SAĞLAM"}, {"aparat": "H4371", "raf": "BY-236", "parca": "TAI-181A1110-5-REVA-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H4373", "raf": "BY-236", "parca": "TAI-181A1110-5-REVA-UA1-040", "durum": "SAĞLAM"}, {"aparat": "H4372", "raf": "BY-236", "parca": "TAI-181A1110-5-REVA-UA1-050", "durum": "SAĞLAM"}, {"aparat": "H5921", "raf": "BY-243", "parca": "TAI-D5357221021023F-REVU-UA1-020", "durum": "SAĞLAM"}, {"aparat": "H5922", "raf": "BY-243", "parca": "TAI-D5357221021023F-REVU-UA1-030", "durum": "SAĞLAM"}, {"aparat": "H4507", "raf": "BY-243", "parca": "FAC-C02382112-101-REV00/-A-UA1-020-030 FAC-C02382112-102-REV00/-A-UA1-020-030 FAC-C02382117-101-REV00/-A-UA1-020-030 FAC-C02382117-102-REV00/-A-UA1-020-030 FAC-C02382112-101", "durum": "SAĞLAM"}];
+  let searchFilter = 'all';
+
+  // ==================================================
+  // MASTER YETKİ SİSTEMİ
+  // ==================================================
+  // NOT: Bu sadece istemci taraflı (client-side) basit bir kilit sistemidir.
+  // Şifreyi burada değiştirebilirsiniz. Gerçek bir güvenlik katmanı değildir,
+  // sadece yetkisiz kişilerin yanlışlıkla silme/ekleme yapmasını önler.
+  const MASTER_PASSWORD = 'HMS2026';
+
+  // Şikayet girişi için ayrı bir şifre — bölümden sorumlu mühendise özel.
+  // Master şifresinden bağımsızdır (istersen aynı da yapabilirsin).
+  const COMPLAINT_PASSWORD = 'SIKAYET2026';
+  let pendingMasterAction = null; // Master girişi başarılı olunca çalıştırılacak işlem
+
+  function isMasterActive() {
+    return localStorage.getItem('master_active') === 'true';
+  }
+
+  // Master yetkisi, o an giriş yapmış operatöre bağlıdır.
+  // Farklı bir operatör giriş yaptığında (isim eşleşmiyorsa) master oturumu
+  // otomatik olarak sıfırlanır ve şifre tekrar sorulur.
+  function syncMasterOwnership() {
+    const currentUser = localStorage.getItem('active_operator_name') || '';
+    const masterOwner = localStorage.getItem('master_active_for') || '';
+    if (isMasterActive() && currentUser !== masterOwner) {
+      localStorage.removeItem('master_active');
+      localStorage.removeItem('master_active_for');
+    }
+  }
+
+  function updateMasterUI() {
+    const btn = document.getElementById('masterBtn');
+    const label = document.getElementById('masterBtnLabel');
+    if (!btn || !label) return;
+    if (isMasterActive()) {
+      btn.classList.add('is-active');
+      label.textContent = 'Master Aktif ✓';
+    } else {
+      btn.classList.remove('is-active');
+      label.textContent = 'Master Girişi';
+    }
+  }
+
+  function toggleMasterMode() {
+    if (isMasterActive()) {
+      if (confirm('Master modundan çıkmak istediğinize emin misiniz?')) {
+        localStorage.removeItem('master_active');
+        localStorage.removeItem('master_active_for');
+        updateMasterUI();
+      }
+    } else {
+      openMasterLoginModal();
+    }
+  }
+
+  // Yetki gerektiren bir işlemi çalıştırmadan önce master girişini kontrol eder.
+  // Master aktifse işlemi direkt çalıştırır, değilse giriş modalını açar ve
+  // giriş başarılı olunca işlemi otomatik çalıştırır.
+  function requireMaster(action) {
+    if (isMasterActive()) {
+      action();
+    } else {
+      pendingMasterAction = action;
+      openMasterLoginModal();
+    }
+  }
+
+  function openMasterLoginModal() {
+    document.getElementById('masterLoginError').style.display = 'none';
+    document.getElementById('masterPasswordInput').value = '';
+    document.getElementById('masterLoginModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('masterPasswordInput').focus(), 50);
+  }
+
+  function closeMasterLoginModal() {
+    document.getElementById('masterLoginModal').style.display = 'none';
+    pendingMasterAction = null;
+  }
+
+  function handleMasterLoginSubmit(e) {
+    e.preventDefault();
+    const entered = document.getElementById('masterPasswordInput').value;
+    if (entered === MASTER_PASSWORD) {
+      localStorage.setItem('master_active', 'true');
+      localStorage.setItem('master_active_for', localStorage.getItem('active_operator_name') || '');
+      updateMasterUI();
+      document.getElementById('masterLoginModal').style.display = 'none';
+      const action = pendingMasterAction;
+      pendingMasterAction = null;
+      if (action) action();
+    } else {
+      document.getElementById('masterLoginError').style.display = 'block';
+      document.getElementById('masterPasswordInput').value = '';
+      document.getElementById('masterPasswordInput').focus();
+    }
+  }
+
+  // ==================================================
+  // ÖZEL EKLENEN APARAT/PARÇA KAYITLARI (Firestore - ortak)
+  // ==================================================
+  function getAllRecords() {
+    return database.concat(customRecordsCache.map(r => ({
+      aparat: r.aparat, raf: r.raf, parca: r.parca, durum: r.durum
+    })));
+  }
+
+  function updateTotalRecordCount() {
+    const total = getAllRecords().length;
+    const el = document.getElementById('totalRecordCount');
+    if (el) el.textContent = total + ' Aparat Kayıtlı';
+    const headerEl = document.getElementById('headerRecordCount');
+    if (headerEl) headerEl.textContent = total;
+  }
+
+  function handleAddRecordClick() {
+    requireMaster(() => openAddRecordModal());
+  }
+
+  function openAddRecordModal() {
+    document.getElementById('addRecordForm').reset();
+    document.getElementById('addRecordModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('newAparatCode').focus(), 50);
+  }
+
+  function closeAddRecordModal() {
+    document.getElementById('addRecordModal').style.display = 'none';
+  }
+
+  function handleAddRecordSubmit(e) {
+    e.preventDefault();
+    const aparat = document.getElementById('newAparatCode').value.trim().toUpperCase();
+    const raf = document.getElementById('newShelf').value.trim().toUpperCase();
+    const parca = document.getElementById('newPart').value.trim() || '-';
+    const durum = document.getElementById('newStatus').value;
+
+    if (!aparat || !raf) return;
+
+    const operatorName = localStorage.getItem('active_operator_name') || 'Bilinmiyor';
+    const submitBtn = document.querySelector('#addRecordForm button[type="submit"]');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Kaydediliyor...'; }
+
+    db.collection('aparat_records').add({
+      aparat, raf, parca, durum,
+      addedBy: operatorName,
+      addedAt: new Date().toLocaleString('tr-TR'),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+      closeAddRecordModal();
+      alert('"' + aparat + '" kodlu aparat başarıyla eklendi.');
+    }).catch(err => {
+      alert('Kayıt eklenirken bir hata oluştu: ' + err.message);
+    }).finally(() => {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Kaydı Ekle ✓'; }
+    });
+  }
+
+  const loginScreen = document.getElementById('loginScreen');
+  const complaintScreen = document.getElementById('complaintScreen');
+  const mainApp = document.getElementById('mainApp');
+  const displayUser = document.getElementById('displayUser');
+  const displayShift = document.getElementById('displayShift');
+
+  const searchBox = document.getElementById('searchBox');
+  const searchLabel = document.getElementById('searchLabel');
+  const clearBtn = document.getElementById('clearBtn');
+  const resultsContainer = document.getElementById('results');
+  const matchCount = document.getElementById('matchCount');
+  const emptyPrompt = document.getElementById('emptyPrompt');
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // OTURUM & EKRAN GEÇİŞLERİ
+  function checkExistingSession() {
+    const savedUser = localStorage.getItem('active_operator_name');
+    const savedShift = localStorage.getItem('active_operator_shift');
+    if (savedUser) {
+      displayUser.textContent = savedUser;
+      displayShift.textContent = savedShift || '1. Vardiya (07:15 - 15:15)';
+      loginScreen.style.display = 'none';
+      complaintScreen.style.display = 'none';
+      mainApp.style.display = 'block';
+      updateComplaintsUI();
+      renderSearchHistory();
+      syncMasterOwnership();
+      updateMasterUI();
+      updateTotalRecordCount();
+      renderShelfUpdateLog();
+    } else {
+      loginScreen.style.display = 'flex';
+      complaintScreen.style.display = 'none';
+      mainApp.style.display = 'none';
+    }
+  }
+
+  // ==================================================
+  // ŞİKAYET GİRİŞİ ŞİFRE KAPISI (Sadece yetkili mühendis)
+  // ==================================================
+  function openComplaintPasswordGate() {
+    document.getElementById('complaintPasswordError').style.display = 'none';
+    document.getElementById('complaintPasswordInput').value = '';
+    document.getElementById('complaintPasswordModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('complaintPasswordInput').focus(), 50);
+  }
+
+  function closeComplaintPasswordGate() {
+    document.getElementById('complaintPasswordModal').style.display = 'none';
+  }
+
+  function handleComplaintPasswordSubmit(e) {
+    e.preventDefault();
+    const entered = document.getElementById('complaintPasswordInput').value;
+    if (entered === COMPLAINT_PASSWORD) {
+      document.getElementById('complaintPasswordModal').style.display = 'none';
+      showComplaintScreen();
+    } else {
+      document.getElementById('complaintPasswordError').style.display = 'block';
+      document.getElementById('complaintPasswordInput').value = '';
+      document.getElementById('complaintPasswordInput').focus();
+    }
+  }
+
+  let selectedPhotoFiles = [];
+
+  function showComplaintScreen() {
+    loginScreen.style.display = 'none';
+    complaintScreen.style.display = 'flex';
+    selectedPhotoFiles = [];
+    const previewContainer = document.getElementById('photoPreviewContainer');
+    if (previewContainer) previewContainer.innerHTML = '';
+    const dateEl = document.getElementById('complaintFormDate');
+    if (dateEl) dateEl.textContent = new Date().toLocaleDateString('tr-TR');
+    document.getElementById('compEngineer').focus();
+  }
+
+  // FOTOĞRAF SEÇİMİ VE ÖNİZLEME
+  function handlePhotoSelection(input) {
+    const newFiles = Array.from(input.files || []);
+    let addedCount = 0;
+    newFiles.forEach(file => {
+      if (selectedPhotoFiles.length < 5) {
+        selectedPhotoFiles.push(file);
+        addedCount++;
+      }
+    });
+    if (addedCount < newFiles.length) {
+      alert('En fazla 5 fotoğraf ekleyebilirsiniz. Bazı dosyalar eklenmedi.');
+    }
+    input.value = '';
+    renderPhotoPreviews();
+  }
+
+  function renderPhotoPreviews() {
+    const container = document.getElementById('photoPreviewContainer');
+    if (!container) return;
+    container.innerHTML = selectedPhotoFiles.map((file, idx) => {
+      const url = URL.createObjectURL(file);
+      return `
+        <div class="photo-preview-item">
+          <img src="${url}" alt="Önizleme">
+          <button type="button" class="photo-preview-remove" onclick="removeSelectedPhoto(${idx})">✕</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function removeSelectedPhoto(idx) {
+    selectedPhotoFiles.splice(idx, 1);
+    renderPhotoPreviews();
+  }
+
+  function uploadComplaintPhotos(files) {
+    const uploads = files.map((file, idx) => {
+      const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+      const path = 'complaints/' + Date.now() + '_' + idx + '_' + safeName;
+      const ref = storage.ref().child(path);
+      return ref.put(file).then(snapshot => snapshot.ref.getDownloadURL());
+    });
+    return Promise.all(uploads);
+  }
+
+  function showLoginScreen() {
+    complaintScreen.style.display = 'none';
+    loginScreen.style.display = 'flex';
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const user = document.getElementById('loginUser').value.trim();
+    const shift = document.getElementById('loginShift').value;
+
+    if (!user) return;
+
+    localStorage.setItem('active_operator_name', user);
+    localStorage.setItem('active_operator_shift', shift);
+
+    displayUser.textContent = user;
+    displayShift.textContent = shift;
+
+    loginScreen.style.display = 'none';
+    mainApp.style.display = 'block';
+    updateComplaintsUI();
+    renderSearchHistory();
+    syncMasterOwnership();
+    updateMasterUI();
+    updateTotalRecordCount();
+    renderShelfUpdateLog();
+    searchBox.focus();
+  }
+
+  function handleLogout() {
+    if (confirm('İstasyondan çıkış yapmak istediğinize emin misiniz?')) {
+      localStorage.removeItem('active_operator_name');
+      localStorage.removeItem('active_operator_shift');
+      document.getElementById('loginUser').value = '';
+      loginScreen.style.display = 'flex';
+      complaintScreen.style.display = 'none';
+      mainApp.style.display = 'none';
+    }
+  }
+
+  // 1. FİKİR: RAF / KONUM GÜNCELLEME (ZİMMET & TAŞIMA) — Firestore, ortak
+  function changeShelf(aparatCode) {
+    const existing = shelfOverridesCache[aparatCode];
+    const currentVal = (existing && existing.value) || (getAllRecords().find(x => x.aparat === aparatCode) || {}).raf || '';
+
+    const newShelf = prompt(
+      `"${aparatCode}" aparatı için yeni raf / konum bilgisini giriniz:\n(Örn: BY-213, BYA-2, Takımhane, Bakımda vb.)`,
+      currentVal
+    );
+
+    if (newShelf !== null) {
+      const cleanShelf = newShelf.trim().toUpperCase();
+      const operatorName = localStorage.getItem('active_operator_name') || 'Bilinmiyor';
+      const nowStr = new Date().toLocaleString('tr-TR');
+
+      if (cleanShelf) {
+        db.collection('shelf_overrides').doc(aparatCode).set({
+          value: cleanShelf,
+          updatedBy: operatorName,
+          updatedAt: nowStr,
+          shown: false
+        }).then(() => {
+          db.collection('shelf_update_log').add({
+            aparat: aparatCode,
+            oldValue: currentVal || '—',
+            value: cleanShelf,
+            updatedBy: operatorName,
+            updatedAt: nowStr,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }).catch(err => alert('Konum güncellenirken hata oluştu: ' + err.message));
+      } else {
+        db.collection('shelf_overrides').doc(aparatCode).delete()
+          .catch(err => alert('Konum silinirken hata oluştu: ' + err.message));
+      }
+    }
+  }
+
+  // GÜNCELLEME GEÇMİŞİ (KONUM DEĞİŞİKLİKLERİ LOGU) — Firestore, ortak
+  function renderShelfUpdateLog() {
+    const wrapper = document.getElementById('shelfLogWrapper');
+    const container = document.getElementById('shelfLogList');
+    if (!wrapper || !container) return;
+
+    if (shelfLogCache.length === 0) {
+      wrapper.style.display = 'none';
+      return;
+    }
+
+    wrapper.style.display = 'block';
+    container.innerHTML = shelfLogCache.slice(0, 5).map(entry => `
+      <div class="shelf-log-item">
+        <span class="shelf-log-aparat">${escapeHtml(entry.aparat)}:</span>
+        <span class="shelf-log-value shelf-log-value-old">${escapeHtml(entry.oldValue || '—')}</span>
+        <span class="shelf-log-arrow">→</span>
+        <span class="shelf-log-value">${escapeHtml(entry.value)}</span>
+        <span class="shelf-log-meta">${escapeHtml(entry.updatedBy)} • ${escapeHtml(entry.updatedAt)}</span>
+      </div>
+    `).join('');
+  }
+
+  function clearShelfUpdateLog() {
+    requireMaster(() => {
+      if (confirm('Konum güncelleme geçmişi silinecektir. Emin misiniz?')) {
+        shelfLogCache.forEach(entry => db.collection('shelf_update_log').doc(entry.id).delete());
+      }
+    });
+  }
+
+  // ==================================================
+  // EĞİTİM SINAVLARI VE TAKİP MODÜLÜ
+  // ==================================================
+  const EXAM_PASS_THRESHOLD = 0.7; // %70 ve üzeri geçer
+  let currentExamAnswers = {};
+
+  function setExamSubtab(sub) {
+    document.getElementById('exam-sub-take').classList.toggle('active', sub === 'take');
+    document.getElementById('exam-sub-track').classList.toggle('active', sub === 'track');
+    document.getElementById('exam-view-take').classList.toggle('hidden', sub !== 'take');
+    document.getElementById('exam-view-track').classList.toggle('hidden', sub !== 'track');
+    if (sub === 'track') renderExamTrackTable();
+  }
+
+  function renderExamSelect() {
+    const select = document.getElementById('examSelect');
+    if (!select) return;
+    const currentVal = select.value;
+    select.innerHTML = '<option value="">— Sınav seçiniz —</option>' +
+      examsCache.map(e => `<option value="${e.id}">${escapeHtml(e.title)}</option>`).join('');
+    if (currentVal) select.value = currentVal;
+  }
+
+  function getExamAttemptKey(examId, operatorName) {
+    return 'exam_attempt_' + btoa(unescape(encodeURIComponent(operatorName + '::' + examId))).replace(/[^a-zA-Z0-9]/g, '');
+  }
+
+  function formatDuration(seconds) {
+    seconds = Math.max(0, Math.round(seconds || 0));
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return h > 0 ? `${h}s ${String(m).padStart(2,'0')}dk ${String(s).padStart(2,'0')}sn` : `${m}dk ${String(s).padStart(2,'0')}sn`;
+  }
+
+  function clearExamTimer() {
+    if (examTimerInterval) { clearInterval(examTimerInterval); examTimerInterval = null; }
+    activeExamStartedAt = null;
+    activeExamId = null;
+    const timer = document.getElementById('examTimer');
+    if (timer) timer.style.display = 'none';
+  }
+
+  function startExamTimer(exam) {
+    clearExamTimer();
+    const operatorName = localStorage.getItem('active_operator_name');
+    const limitMinutes = Number(exam.durationMinutes || 30);
+    if (!operatorName || !limitMinutes) return;
+    activeExamId = exam.id;
+    const key = getExamAttemptKey(exam.id, operatorName);
+    let started = Number(localStorage.getItem(key));
+    if (!started || Date.now() - started > limitMinutes * 60 * 1000 + 1000) {
+      started = Date.now();
+      localStorage.setItem(key, String(started));
+    }
+    activeExamStartedAt = started;
+    const timer = document.getElementById('examTimer');
+    const value = document.getElementById('examTimerValue');
+    if (!timer || !value) return;
+    timer.style.display = 'flex';
+
+    const tick = () => {
+      const remaining = limitMinutes * 60 - Math.floor((Date.now() - started) / 1000);
+      if (remaining <= 0) {
+        value.textContent = 'SÜRE DOLDU';
+        timer.classList.add('expired');
+        clearInterval(examTimerInterval);
+        examTimerInterval = null;
+        autoSubmitExpiredExam(exam.id);
+        return;
+      }
+      const mm = Math.floor(remaining / 60);
+      const ss = remaining % 60;
+      value.textContent = `${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+      timer.classList.toggle('expired', remaining <= 60);
+    };
+    tick();
+    examTimerInterval = setInterval(tick, 1000);
+  }
+
+  function renderExamSelect() {
+    const select = document.getElementById('examSelect');
+    if (!select) return;
+    const currentVal = select.value;
+    select.innerHTML = '<option value="">— Sınav seçiniz —</option>' +
+      examsCache.map(e => `<option value="${e.id}">${escapeHtml(e.title)} · ${Number(e.durationMinutes || 30)} dk</option>`).join('');
+    if (currentVal) select.value = currentVal;
+  }
+
+  function loadSelectedExam() {
+    const examId = document.getElementById('examSelect').value;
+    const container = document.getElementById('examQuestionsContainer');
+    const resultBox = document.getElementById('examResultBox');
+    clearExamTimer();
+    resultBox.className = 'exam-result-box';
+    resultBox.innerHTML = '';
+    currentExamAnswers = {};
+    if (!examId) { container.innerHTML = ''; return; }
+    const exam = examsCache.find(e => e.id === examId);
+    if (!exam) { container.innerHTML = ''; return; }
+    const operatorName = localStorage.getItem('active_operator_name');
+    if (!operatorName) {
+      container.innerHTML = '<div class="empty-state">Sınava başlamak için önce istasyona giriş yapmalısınız.</div>';
+      return;
+    }
+    container.innerHTML = exam.questions.map((q, qi) => `
+      <div class="exam-question-block">
+        <div class="exam-question-title">${qi + 1}. ${escapeHtml(q.q)}</div>
+        ${q.options.map((opt, oi) => `
+          <label class="exam-option-row">
+            <input type="radio" name="exam-q-${qi}" value="${oi}" onchange="currentExamAnswers[${qi}]=${oi}">
+            <span>${escapeHtml(opt)}</span>
+          </label>
+        `).join('')}
+      </div>
+    `).join('') + `
+      <button id="examSubmitButton" class="btn-primary" style="margin-top:6px;" onclick="submitExam('${exam.id}')">Sınavı Bitir ve Puanla ✓</button>
+    `;
+    startExamTimer(exam);
+  }
+
+  function saveExamResult(exam, operatorName, correctCount, total, passed, durationSeconds, timedOut) {
+    const nowStr = new Date().toLocaleString('tr-TR');
+    return db.collection('exam_results').add({
+      examId: exam.id, examTitle: exam.title, operatorName, score: correctCount, total, passed,
+      timedOut: !!timedOut, durationSeconds: Math.max(0, Math.round(durationSeconds || 0)),
+      durationText: formatDuration(durationSeconds), takenAt: nowStr,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+
+  function finishExamUI(exam, passed, correctCount, total, durationSeconds, timedOut) {
+    const key = getExamAttemptKey(exam.id, localStorage.getItem('active_operator_name') || '');
+    localStorage.removeItem(key);
+    clearExamTimer();
+    const resultBox = document.getElementById('examResultBox');
+    resultBox.className = 'exam-result-box ' + (passed ? 'pass' : 'fail');
+    resultBox.innerHTML = (timedOut ? '⏰ Süre doldu — ' : (passed ? '✅ Başarılı — ' : '❌ Başarısız — ')) +
+      correctCount + ' / ' + total + ' doğru (%' + Math.round((correctCount / total) * 100) + ') · Süre: ' + formatDuration(durationSeconds);
+    const btn = document.getElementById('examSubmitButton');
+    if (btn) btn.disabled = true;
+  }
+
+  function autoSubmitExpiredExam(examId) {
+    const exam = examsCache.find(e => e.id === examId);
+    const operatorName = localStorage.getItem('active_operator_name');
+    if (!exam || !operatorName || activeExamId !== examId) return;
+    let correctCount = 0;
+    exam.questions.forEach((q, qi) => { if (currentExamAnswers[qi] === q.correctIndex) correctCount++; });
+    const total = exam.questions.length;
+    const durationSeconds = Number(exam.durationMinutes || 30) * 60;
+    saveExamResult(exam, operatorName, correctCount, total, false, durationSeconds, true)
+      .then(() => finishExamUI(exam, false, correctCount, total, durationSeconds, true))
+      .catch(err => alert('Süre dolan sınav kaydedilirken hata oluştu: ' + err.message));
+  }
+
+  function submitExam(examId) {
+    const exam = examsCache.find(e => e.id === examId);
+    if (!exam) return;
+    const operatorName = localStorage.getItem('active_operator_name');
+    if (!operatorName) { alert('Sınav sonucunun kaydedilebilmesi için önce istasyona giriş yapmış olmanız gerekiyor.'); return; }
+    if (Object.keys(currentExamAnswers).length < exam.questions.length) { alert('Lütfen tüm soruları cevaplayınız.'); return; }
+    const started = activeExamStartedAt || Date.now();
+    const limitSeconds = Number(exam.durationMinutes || 30) * 60;
+    const elapsedSeconds = Math.floor((Date.now() - started) / 1000);
+    if (elapsedSeconds >= limitSeconds) { autoSubmitExpiredExam(examId); return; }
+    let correctCount = 0;
+    exam.questions.forEach((q, qi) => { if (currentExamAnswers[qi] === q.correctIndex) correctCount++; });
+    const total = exam.questions.length;
+    const ratio = correctCount / total;
+    const passed = ratio >= EXAM_PASS_THRESHOLD;
+    saveExamResult(exam, operatorName, correctCount, total, passed, elapsedSeconds, false)
+      .then(() => finishExamUI(exam, passed, correctCount, total, elapsedSeconds, false))
+      .catch(err => alert('Sonuç kaydedilirken hata oluştu: ' + err.message));
+  }
+
+  // SINAV OLUŞTURMA (MASTER GEREKLİ)
+  function handleAddExamClick() {
+    requireMaster(() => openExamForm());
+  }
+
+  function openExamForm() {
+    const container = document.getElementById('examFormContainer');
+    const qCount = 3;
+    let questionsHtml = '';
+    for (let i = 0; i < qCount; i++) {
+      questionsHtml += `
+        <div class="exam-question-block">
+          <div class="field">
+            <label class="form-label">Soru ${i + 1}</label>
+            <input type="text" id="newExamQ${i}" class="form-input" placeholder="Soru metni">
+          </div>
+          ${[0, 1, 2, 3].map(oi => `
+            <div class="field" style="margin-bottom:6px;">
+              <label class="exam-option-row" style="padding:0;">
+                <input type="radio" name="newExamCorrect${i}" value="${oi}" ${oi === 0 ? 'checked' : ''}>
+                <input type="text" id="newExamQ${i}Opt${oi}" class="form-input" placeholder="Seçenek ${oi + 1}" style="flex:1;">
+              </label>
+            </div>
+          `).join('')}
+          <div class="add-record-note" style="text-align:left;">Doğru cevabın yanındaki radyo düğmesini işaretleyin</div>
+        </div>
+      `;
+    }
+
+    container.innerHTML = `
+      <div class="ts-form">
+        <div class="field">
+          <label class="form-label">Eğitim / Sınav Adı</label>
+          <input type="text" id="newExamTitle" class="form-input" placeholder="Örn: İş Sağlığı ve Güvenliği Temel Eğitimi">
+        </div>
+        <div class="field">
+          <label class="form-label">Sınav Süresi</label>
+          <select id="newExamDuration" class="form-select">
+            <option value="5">5 dakika</option>
+            <option value="10">10 dakika</option>
+            <option value="15">15 dakika</option>
+            <option value="20">20 dakika</option>
+            <option value="30" selected>30 dakika</option>
+            <option value="45">45 dakika</option>
+            <option value="60">60 dakika</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="form-label">Tekrar Sıklığı</label>
+          <select id="newExamFreq" class="form-select">
+            <option value="1">Ayda bir</option>
+            <option value="3">3 ayda bir</option>
+            <option value="6" selected>6 ayda bir</option>
+            <option value="12">Yılda bir</option>
+          </select>
+        </div>
+        ${questionsHtml}
+        <div class="ts-form-row">
+          <button class="ts-save" onclick="saveExamForm()">Sınavı Kaydet</button>
+          <button class="ts-cancel" onclick="document.getElementById('examFormContainer').innerHTML=''">Vazgeç</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function saveExamForm() {
+    const title = document.getElementById('newExamTitle').value.trim();
+    const freqMonths = parseInt(document.getElementById('newExamFreq').value, 10);
+    const durationMinutes = parseInt(document.getElementById('newExamDuration').value, 10);
+    if (!title) { alert('Lütfen eğitim/sınav adını giriniz.'); return; }
+
+    const questions = [];
+    for (let i = 0; i < 3; i++) {
+      const qText = document.getElementById('newExamQ' + i).value.trim();
+      const options = [0, 1, 2, 3].map(oi => document.getElementById('newExamQ' + i + 'Opt' + oi).value.trim());
+      const correctRadio = document.querySelector('input[name="newExamCorrect' + i + '"]:checked');
+      if (!qText || options.some(o => !o)) {
+        alert((i + 1) + '. sorunun metni ve tüm seçenekleri doldurulmalıdır.');
+        return;
+      }
+      questions.push({ q: qText, options, correctIndex: parseInt(correctRadio.value, 10) });
+    }
+
+    const operatorName = localStorage.getItem('active_operator_name') || 'Bilinmiyor';
+    db.collection('training_exams').add({
+      title,
+      frequencyMonths: freqMonths,
+      durationMinutes,
+      questions,
+      createdBy: operatorName,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+      document.getElementById('examFormContainer').innerHTML = '';
+      alert('"' + title + '" sınavı başarıyla oluşturuldu.');
+    }).catch(err => alert('Sınav kaydedilirken hata oluştu: ' + err.message));
+  }
+
+  // TAKİP ÇİZELGESİ: KİM, HANGİ EĞİTİMİ, NE ZAMAN, NE SIKLIKLA TAMAMLAMIŞ
+  function renderExamTrackTable() {
+    const container = document.getElementById('examTrackContainer');
+    if (!container) return;
+    if (examsCache.length === 0) {
+      container.innerHTML = '<div class="empty-state">Henüz tanımlı bir eğitim sınavı yok.</div>';
+      return;
+    }
+    const now = new Date();
+    const html = examsCache.map(exam => {
+      const resultsForExam = examResultsCache.filter(r => r.examId === exam.id);
+      const latestByOperator = {};
+      resultsForExam.forEach(r => {
+        const old = latestByOperator[r.operatorName];
+        const rSec = r.createdAt && r.createdAt.seconds ? r.createdAt.seconds : 0;
+        const oldSec = old && old.createdAt && old.createdAt.seconds ? old.createdAt.seconds : 0;
+        if (!old || rSec >= oldSec) latestByOperator[r.operatorName] = r;
+      });
+      const operators = Object.keys(latestByOperator);
+      const rows = operators.map(opName => {
+        const r = latestByOperator[opName];
+        let isOverdue = false;
+        if (r.createdAt && r.createdAt.seconds) {
+          const dueDate = new Date(r.createdAt.seconds * 1000);
+          dueDate.setMonth(dueDate.getMonth() + (exam.frequencyMonths || 6));
+          isOverdue = now > dueDate;
+        }
+        const warning = isOverdue ? ' ⚠️' : '';
+        const statusHtml = isOverdue
+          ? `<span class="track-status gecmis">Süresi Geçmiş${warning}</span>`
+          : (r.timedOut ? '<span class="track-status gecmis">⏰ Süre Doldu</span>' : '<span class="track-status guncel">Güncel</span>');
+        return `<tr>
+          <td>${escapeHtml(opName)}</td>
+          <td>${escapeHtml(r.takenAt || '—')}</td>
+          <td>${r.score}/${r.total} ${r.passed ? '✅' : '❌'}</td>
+          <td>${statusHtml}</td>
+          <td>${escapeHtml(r.durationText || formatDuration(r.durationSeconds || 0))}</td>
+        </tr>`;
+      }).join('');
+      return `<div class="exam-group-title">${escapeHtml(exam.title)}</div>
+        <div class="exam-group-freq">Tekrar: ${exam.frequencyMonths || 6} ayda bir · Sınav süresi: ${Number(exam.durationMinutes || 30)} dk · Geçme: %${Math.round(EXAM_PASS_THRESHOLD * 100)}</div>
+        ${operators.length === 0 ? '<div class="empty-state" style="padding:16px;">Bu sınavı henüz kimse çözmedi.</div>' : `<table class="track-table"><thead><tr><th>Operatör</th><th>Son Tamamlama</th><th>Skor</th><th>Durum</th><th>Süre</th></tr></thead><tbody>${rows}</tbody></table>`}`;
+    }).join('');
+    container.innerHTML = html + `<div class="export-btn-group" style="margin-top:14px;"><button class="btn-export" onclick="exportExamTrackToExcel()">📊 Excel</button></div>`;
+  }
+
+  function exportExamTrackToExcel() {
+    if (examResultsCache.length === 0) { alert('Dışa aktarılacak eğitim kaydı bulunmuyor.'); return; }
+    const rows = examResultsCache.map(r => ({
+      'Eğitim / Sınav': r.examTitle,
+      'Operatör': r.operatorName,
+      'Tamamlama Tarihi': r.takenAt,
+      'Skor': r.score + '/' + r.total,
+      'Sonuç': r.timedOut ? 'Süre Doldu' : (r.passed ? 'Başarılı' : 'Başarısız'),
+      'Süre': r.durationText || formatDuration(r.durationSeconds || 0)
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Egitim Takip');
+    XLSX.writeFile(wb, 'egitim_takip_' + todayStr() + '.xlsx');
+  }
+
+  // ==================================================
+  // DIŞA AKTARMA: KONUM GÜNCELLEME GEÇMİŞİ (Excel / PDF)
+  // ==================================================
+  function todayStr() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  function exportShelfLogToExcel() {
+    if (shelfLogCache.length === 0) { alert('Dışa aktarılacak güncelleme kaydı bulunmuyor.'); return; }
+    const rows = shelfLogCache.map(entry => ({
+      'Aparat': entry.aparat,
+      'Eski Konum': entry.oldValue || '—',
+      'Yeni Konum': entry.value,
+      'Güncelleyen': entry.updatedBy,
+      'Tarih': entry.updatedAt
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Konum Guncellemeleri');
+    XLSX.writeFile(wb, 'konum_guncellemeleri_' + todayStr() + '.xlsx');
+  }
+
+  function exportShelfLogToPDF() {
+    if (shelfLogCache.length === 0) { alert('Dışa aktarılacak güncelleme kaydı bulunmuyor.'); return; }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFontSize(14);
+    doc.text('Aparat Konum Guncelleme Gecmisi', 14, 15);
+    doc.setFontSize(9);
+    doc.text('Olusturulma: ' + new Date().toLocaleString('tr-TR'), 14, 21);
+    doc.autoTable({
+      startY: 26,
+      head: [['Aparat', 'Eski Konum', 'Yeni Konum', 'Güncelleyen', 'Tarih']],
+      body: shelfLogCache.map(entry => [entry.aparat, entry.oldValue || '—', entry.value, entry.updatedBy, entry.updatedAt]),
+      styles: { fontSize: 8 }
+    });
+    doc.save('konum_guncellemeleri_' + todayStr() + '.pdf');
+  }
+
+  // 2. FİKİR: SON ARANANLAR (SEARCH HISTORY)
+  function getSearchHistory() {
+    return JSON.parse(localStorage.getItem('search_history') || '[]');
+  }
+
+  function addSearchHistory(query) {
+    if (!query || query.length < 2) return;
+    let history = getSearchHistory();
+    history = history.filter(item => item.toUpperCase() !== query.toUpperCase());
+    history.unshift(query);
+    if (history.length > 5) history = history.slice(0, 5);
+    localStorage.setItem('search_history', JSON.stringify(history));
+    renderSearchHistory();
+  }
+
+  function renderSearchHistory() {
+    const history = getSearchHistory();
+    const wrapper = document.getElementById('searchHistoryWrapper');
+    const container = document.getElementById('historyChips');
+    if (!wrapper || !container) return;
+
+    if (history.length === 0) {
+      wrapper.style.display = 'none';
+      return;
+    }
+
+    wrapper.style.display = 'flex';
+    container.innerHTML = history.map(item => `
+      <span class="history-chip" onclick="applyHistorySearch('${escapeHtml(item)}')">
+        ${escapeHtml(item)}
+      </span>
+    `).join('');
+  }
+
+  function applyHistorySearch(term) {
+    searchBox.value = term;
+    clearBtn.style.display = 'flex';
+    handleSearch();
+  }
+
+  function clearSearchHistory() {
+    localStorage.removeItem('search_history');
+    renderSearchHistory();
+  }
+
+  // 5. FİKİR: DAHİLİ TELEFON REHBERİ MODAL KONTROLÜ
+  function openPhoneModal() {
+    document.getElementById('phoneModal').style.display = 'flex';
+  }
+
+  function closePhoneModal() {
+    document.getElementById('phoneModal').style.display = 'none';
+  }
+
+  function renderComplaintTrainingSelect() {
+    const select = document.getElementById('compTraining');
+    if (!select) return;
+    const current = select.value;
+    select.innerHTML = '<option value="">— İlgili eğitimi seçiniz —</option>' +
+      examsCache.map(e => `<option value="${e.id}">${escapeHtml(e.title)}</option>`).join('');
+    if (current && examsCache.some(e => e.id === current)) select.value = current;
+  }
+
+  // MÜŞTERİ ŞİKAYET KAYDI (GİRİŞSİZ)
+  function handlePublicComplaint(e) {
+    e.preventDefault();
+    const engineer = document.getElementById('compEngineer').value.trim();
+    const company = document.getElementById('compCompany').value.trim();
+    const part = document.getElementById('compPart').value.trim();
+    const type = document.getElementById('compType').value;
+    const examId = document.getElementById('compTraining').value;
+    const exam = examsCache.find(e => e.id === examId);
+    const details = document.getElementById('compDetails').value.trim();
+    const contact = document.getElementById('compContact').value.trim();
+    const nowStr = new Date().toLocaleString('tr-TR');
+
+    const submitBtn = document.querySelector('#publicComplaintForm button[type="submit"]');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Kaydediliyor...'; }
+
+    const photoUploadPromise = selectedPhotoFiles.length > 0
+      ? Promise.resolve().then(() => {
+          if (submitBtn) submitBtn.textContent = 'Fotoğraflar yükleniyor...';
+          return uploadComplaintPhotos(selectedPhotoFiles);
+        })
+      : Promise.resolve([]);
+
+    photoUploadPromise.then(photoUrls => {
+      if (submitBtn) submitBtn.textContent = 'Kaydediliyor...';
+      return db.collection('complaints').add({
+        enteredBy: engineer,
+        company: company,
+        part: part || 'Belirtilmedi',
+        type: type,
+        examId: examId || null,
+        examTitle: exam ? exam.title : null,
+        details: details,
+        contact: contact,
+        photos: photoUrls,
+        date: nowStr,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }).then(docRef => {
+      const displayId = 'ŞİK-' + docRef.id.slice(-5).toUpperCase();
+      return docRef.update({ displayId }).then(() => displayId);
+    }).then(displayId => {
+      alert('Şikayet kaydı resmi olarak oluşturuldu.\nKayıt Takip No: ' + displayId + '\nRaporu Giren: ' + engineer + '\nKalite birimi ivedilikle inceleme başlatacaktır.');
+      document.getElementById('publicComplaintForm').reset();
+      selectedPhotoFiles = [];
+      const previewContainer = document.getElementById('photoPreviewContainer');
+      if (previewContainer) previewContainer.innerHTML = '';
+      showLoginScreen();
+    }).catch(err => {
+      alert('Şikayet gönderilirken bir hata oluştu: ' + err.message);
+    }).finally(() => {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '⚠️ Şikayet Kaydını Resmi Olarak İlet'; }
+    });
+  }
+
+  // ŞİKAYETLER LİSTESİNİ GÜNCELLE (Firestore cache'inden - ortak)
+  function updateComplaintsUI() {
+    const badge = document.getElementById('complaintsCountBadge');
+    const listContainer = document.getElementById('complaintsListContainer');
+
+    if (badge) badge.textContent = complaintsCache.length;
+
+    if (!listContainer) return;
+
+    if (complaintsCache.length === 0) {
+      listContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">✅</div>
+          <p>Henüz iletilmiş açık bir müşteri şikayeti bulunmamaktadır.</p>
+        </div>
+      `;
+      return;
+    }
+
+    listContainer.innerHTML = complaintsCache.map(item => `
+      <div class="complaint-item ${item.examId ? 'exam-link-card' : ''}" ${item.examId ? `onclick="openComplaintTraining('${item.id}')" title="İlgili eğitime git"` : ''}>
+        <div class="complaint-item-top">
+          <span class="complaint-item-id">${escapeHtml(item.displayId || item.id)}</span>
+          <span class="complaint-item-date">${escapeHtml(item.date)}</span>
+        </div>
+        <div class="complaint-item-company">${escapeHtml(item.company)}</div>
+        <span class="complaint-item-type">${escapeHtml(item.type)}</span>
+        ${item.examTitle ? `<button type="button" class="complaint-training-link" onclick="event.stopPropagation(); openComplaintTraining('${item.id}')">🎓 İlgili eğitim: ${escapeHtml(item.examTitle)} →</button>` : ''}
+        ${item.enteredBy ? `<div style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px;">Raporu giren: <strong>${escapeHtml(item.enteredBy)}</strong></div>` : ''}
+        <div style="font-size: 0.78rem; color: #1e40af; font-weight: 700; margin-top: 6px;">
+          İlgili Parça / Sipariş: ${escapeHtml(item.part)}
+        </div>
+        <div class="complaint-item-body">
+          ${escapeHtml(item.details)}
+        </div>
+        ${(item.photos && item.photos.length > 0) ? `
+          <div class="complaint-photos-row">
+            ${item.photos.map(url => `<img class="complaint-photo-thumb" src="${url}" onclick="window.open('${url}', '_blank')" alt="Kanıt fotoğrafı">`).join('')}
+          </div>
+        ` : ''}
+        <div class="complaint-item-contact">
+          <span>📞 <strong>İletişim:</strong> ${escapeHtml(item.contact)}</span>
+          <button class="btn-delete-complaint" onclick="deleteComplaint('${item.id}')">Kaldır ✕</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function openComplaintTraining(docId) {
+    const complaint = complaintsCache.find(c => c.id === docId);
+    if (!complaint || !complaint.examId) { alert('Bu şikayet için ilgili eğitim tanımlanmamış.'); return; }
+    const exam = examsCache.find(e => e.id === complaint.examId);
+    showTab('docs');
+    setExamSubtab('take');
+    const select = document.getElementById('examSelect');
+    if (select && exam) {
+      select.value = exam.id;
+      loadSelectedExam();
+      setTimeout(() => document.getElementById('examSelect')?.scrollIntoView({behavior:'smooth', block:'center'}), 50);
+    }
+  }
+
+  function deleteComplaint(docId) {
+    requireMaster(() => {
+      if (confirm('Bu şikayet kaydını silmek istediğinize emin misiniz?')) {
+        db.collection('complaints').doc(docId).delete()
+          .catch(err => alert('Silinirken hata oluştu: ' + err.message));
+      }
+    });
+  }
+
+  function clearAllComplaints() {
+    requireMaster(() => {
+      if (confirm('Tüm şikayet kayıtları silinecektir. Emin misiniz?')) {
+        complaintsCache.forEach(item => db.collection('complaints').doc(item.id).delete());
+      }
+    });
+  }
+
+  // ==================================================
+  // DIŞA AKTARMA: MÜŞTERİ ŞİKAYETLERİ (Excel / PDF)
+  // ==================================================
+  function exportComplaintsToExcel() {
+    if (complaintsCache.length === 0) { alert('Dışa aktarılacak şikayet kaydı bulunmuyor.'); return; }
+    const rows = complaintsCache.map(item => ({
+      'Takip No': item.displayId || item.id,
+      'Tarih': item.date,
+      'Raporu Giren': item.enteredBy || '-',
+      'Firma': item.company,
+      'Şikayet Türü': item.type,
+      'İlgili Eğitim': item.examTitle || '-',
+      'İlgili Parça': item.part,
+      'Açıklama': item.details,
+      'İletişim': item.contact,
+      'Foto Sayısı': (item.photos && item.photos.length) || 0
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sikayetler');
+    XLSX.writeFile(wb, 'sikayetler_' + todayStr() + '.xlsx');
+  }
+
+  function exportComplaintsToPDF() {
+    if (complaintsCache.length === 0) { alert('Dışa aktarılacak şikayet kaydı bulunmuyor.'); return; }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFontSize(14);
+    doc.text('Musteri ve Kalite Sikayetleri Raporu', 14, 15);
+    doc.setFontSize(9);
+    doc.text('Olusturulma: ' + new Date().toLocaleString('tr-TR'), 14, 21);
+    doc.autoTable({
+      startY: 26,
+      head: [['Takip No', 'Tarih', 'Giren', 'Firma', 'Tür', 'Eğitim', 'Parça', 'Açıklama', 'İletişim', 'Foto']],
+      body: complaintsCache.map(item => [
+        item.displayId || item.id, item.date, item.enteredBy || '-', item.company, item.type, item.examTitle || '-', item.part, item.details, item.contact, (item.photos && item.photos.length) || 0
+      ]),
+      styles: { fontSize: 6.5 },
+      columnStyles: { 6: { cellWidth: 45 } }
+    });
+    doc.save('sikayetler_' + todayStr() + '.pdf');
+  }
+
+  // SEKME DEĞİŞİMİ
+  function showTab(tabId) {
+    document.getElementById('tabSearch').style.display = tabId === 'search' ? 'block' : 'none';
+    document.getElementById('tabDocs').style.display = tabId === 'docs' ? 'block' : 'none';
+    document.getElementById('tabComplaints').style.display = tabId === 'complaints' ? 'block' : 'none';
+
+    document.getElementById('btnTabSearch').classList.toggle('active', tabId === 'search');
+    document.getElementById('btnTabDocs').classList.toggle('active', tabId === 'docs');
+    document.getElementById('btnTabComplaints').classList.toggle('active', tabId === 'complaints');
+
+    if (tabId === 'complaints') {
+      updateComplaintsUI();
+    }
+    if (tabId === 'docs') {
+      renderExamSelect();
+      renderExamTrackTable();
+    }
+  }
+
+  // ARAMA FİLTRESİ
+  function setSearchFilter(mode) {
+    searchFilter = mode;
+    document.getElementById('filterAll').classList.toggle('active', mode === 'all');
+    document.getElementById('filterPart').classList.toggle('active', mode === 'part');
+    document.getElementById('filterAparat').classList.toggle('active', mode === 'aparat');
+
+    if (mode === 'part') {
+      searchLabel.textContent = "İşlenecek Parça Kodunu Giriniz:";
+      searchBox.placeholder = "Örn: 87144162 veya 423Z6202...";
+      emptyPrompt.textContent = "Aparatı ve raf konumunu görmek için parça kodunu yazınız.";
+    } else if (mode === 'aparat') {
+      searchLabel.textContent = "Sorgulanacak Aparat Kodunu Giriniz:";
+      searchBox.placeholder = "Örn: H3029 veya H6100...";
+      emptyPrompt.textContent = "Aparatın rafını ve işlediği parçaları görmek için aparat kodunu yazınız.";
+    } else {
+      searchLabel.textContent = "Aramak İstediğiniz Kodu Giriniz:";
+      searchBox.placeholder = "Örn: 87144162 veya H6100 yazınız...";
+      emptyPrompt.textContent = "Aparatı, raf konumunu ve işlenen parçaları görmek için yukarıya kod yazınız.";
+    }
+
+    searchBox.focus();
+    handleSearch();
+  }
+
+  // ARAMA MOTORU
+  searchBox.addEventListener('input', handleSearch);
+  searchBox.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const q = searchBox.value.trim();
+      if (q) addSearchHistory(q);
+    }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    searchBox.value = '';
+    clearBtn.style.display = 'none';
+    searchBox.focus();
+    renderDefaultState();
+  });
+
+  function handleSearch() {
+    const query = searchBox.value.trim().toUpperCase();
+    if (!query) {
+      clearBtn.style.display = 'none';
+      renderDefaultState();
+      return;
+    }
+    clearBtn.style.display = 'flex';
+
+    const allRecords = getAllRecords();
+    let matches = [];
+    if (searchFilter === 'part') {
+      matches = allRecords.filter(item => (item.parca || '').toUpperCase().includes(query));
+    } else if (searchFilter === 'aparat') {
+      matches = allRecords.filter(item => (item.aparat || '').toUpperCase().includes(query));
+    } else {
+      matches = allRecords.filter(item => 
+        (item.parca || '').toUpperCase().includes(query) || 
+        (item.aparat || '').toUpperCase().includes(query)
+      );
+    }
+
+    renderResults(matches, query);
+  }
+
+  function renderDefaultState() {
+    matchCount.textContent = "Aramak için kod giriniz";
+    resultsContainer.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <p>${emptyPrompt.textContent}</p>
+      </div>
+    `;
+  }
+
+  function renderResults(list, query) {
+    if (list.length === 0) {
+      matchCount.textContent = '0 sonuç bulundu';
+      resultsContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">❌</div>
+          <p><strong>"${escapeHtml(query)}"</strong> koduna ait eşleşen aparat veya parça kaydı bulunamadı.</p>
+        </div>
+      `;
+      return;
+    }
+
+    matchCount.textContent = `${list.length} adet kayıt bulundu`;
+
+    const toMarkShown = [];
+
+    resultsContainer.innerHTML = list.map((item, index) => {
+      const isOk = (item.durum || '').toUpperCase().includes('SAĞLAM');
+      const tagClass = isOk ? 'status-tag' : 'status-tag status-warning';
+
+      const shelfInfo = shelfOverridesCache[item.aparat] || null;
+
+      const activeShelf = (shelfInfo && shelfInfo.value) || item.raf || '-';
+      const showBadge = !!(shelfInfo && shelfInfo.shown === false);
+      const isUpdatedBadge = showBadge ? '<span class="shelf-updated-tag">Güncellendi</span>' : '';
+
+      if (showBadge) toMarkShown.push(item.aparat);
+
+      const updaterInfo = (shelfInfo && shelfInfo.updatedBy)
+        ? `<div class="shelf-updater-info">🖊️ Son güncelleyen: <strong>${escapeHtml(shelfInfo.updatedBy)}</strong> • ${escapeHtml(shelfInfo.updatedAt || '')}</div>`
+        : '';
+
+      return `
+        <div class="result-card">
+          <div class="result-header">
+            <div>
+              <div class="aparat-title">#${index + 1} Fikstür / Aparat</div>
+              <div class="aparat-code">${escapeHtml(item.aparat)}</div>
+            </div>
+            <div class="shelf-badge-box">
+              <div class="shelf-badge">
+                📍 Raf: ${escapeHtml(activeShelf)} ${isUpdatedBadge}
+              </div>
+              <button class="btn-change-shelf" onclick="changeShelf('${escapeHtml(item.aparat)}')">
+                ✎ Konum Değiştir
+              </button>
+            </div>
+          </div>
+          ${updaterInfo}
+          <div style="margin-top: 6px;">
+            <div class="info-item-label">İşlenen Parça Kodu (Bağlanan Parçalar)</div>
+            <div class="info-item-val" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 8px; margin-top: 4px; font-family: monospace; font-size: 0.88rem;">
+              ${escapeHtml(item.parca || 'Tanımlanmamış')}
+            </div>
+          </div>
+          <div style="margin-top: 6px;">
+            <div class="info-item-label">Durum / Not</div>
+            <span class="${tagClass}">${escapeHtml(item.durum || '-')}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // "Güncellendi" rozetini bir kez gösterdikten sonra kalıcı olarak kapat
+    // (bir sonraki aramadan itibaren artık görünmeyecek, ama "son güncelleyen" bilgisi kalır)
+    toMarkShown.forEach(code => {
+      db.collection('shelf_overrides').doc(code).update({ shown: true }).catch(() => {});
+    });
+  }
+
+  // Firestore dinleyicilerini başlat, ardından oturumu kontrol et
+  initFirestoreListeners();
+  checkExistingSession();
+</script>
+</body>
+</html>
